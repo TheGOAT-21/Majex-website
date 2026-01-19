@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ContactService } from '../../services/contact.service';  // ← AJOUTER
 
 @Component({
   selector: 'app-contact',
@@ -25,35 +26,55 @@ export class ContactComponent {
   submitMessage = '';
   submitSuccess = false;
 
+  // ← AJOUTER LE SERVICE ICI
+  constructor(private contactService: ContactService) {}
+
   onSubmit() {
     if (this.isSubmitting) return;
     
     this.isSubmitting = true;
     this.submitMessage = '';
 
-    // Simulate form submission
-    setTimeout(() => {
-      this.isSubmitting = false;
-      this.submitSuccess = true;
-      this.submitMessage = 'Merci pour votre message ! Nous vous recontacterons dans les 24 heures.';
-      
-      // Reset form
-      this.formData = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        company: '',
-        phone: '',
-        service: '',
-        budget: '',
-        message: '',
-        consent: false
-      };
+    // Préparer les données (combiner prénom + nom)
+    const messageData = {
+      name: `${this.formData.firstName} ${this.formData.lastName}`,
+      email: this.formData.email,
+      phone: this.formData.phone,
+      subject: this.formData.service || 'Demande générale',
+      message: `Budget: ${this.formData.budget || 'Non défini'}\nEntreprise: ${this.formData.company || 'N/A'}\n\n${this.formData.message}`
+    };
 
-      // Clear message after 5 seconds
-      setTimeout(() => {
-        this.submitMessage = '';
-      }, 5000);
-    }, 2000);
+    // ← ENVOYER AU BACKEND
+    this.contactService.sendMessage(messageData).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        this.submitSuccess = true;
+        this.submitMessage = response.message;
+        
+        // Réinitialiser le formulaire
+        this.formData = {
+          firstName: '',
+          lastName: '',
+          email: '',
+          company: '',
+          phone: '',
+          service: '',
+          budget: '',
+          message: '',
+          consent: false
+        };
+
+        // Effacer le message après 5 secondes
+        setTimeout(() => {
+          this.submitMessage = '';
+        }, 5000);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.submitSuccess = false;
+        this.submitMessage = err.error?.message || 'Une erreur est survenue. Veuillez réessayer.';
+        console.error('Erreur:', err);
+      }
+    });
   }
 }
