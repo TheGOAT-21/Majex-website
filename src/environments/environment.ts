@@ -11,7 +11,7 @@
 
 export const environment = {
   production: false,  // false = mode développement
-  apiUrl: 'http://127.0.0.1:8000/api'  // URL de votre backend Laravel local
+  apiUrl: 'http://127.0.0.1:8000'  // URL de votre backend Laravel local
 };
 
 /**

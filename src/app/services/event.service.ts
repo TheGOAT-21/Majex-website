@@ -10,9 +10,12 @@ export interface Event {
   description: string;
   type: string;
   date: string;
+  end_date?: string;
   location: string;
   max_participants?: number;
+  current_participants?: number;
   price?: number;
+  formatted_price?: string;
   image_url?: string;
   status: 'draft' | 'published' | 'cancelled' | 'completed';
   created_at?: string;

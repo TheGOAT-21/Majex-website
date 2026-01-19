@@ -42,6 +42,12 @@ export class ContactService {
     });
   }
 
+  // Pour le formulaire public (pas d'auth)
+  sendMessage(data: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/api/contacts`, data);
+  }
+
+  // Pour l'admin (avec auth)
   getMessages(): Observable<ContactMessage[]> {
     return this.http.get<ContactMessage[]>(this.apiUrl, { headers: this.getHeaders() });
   }

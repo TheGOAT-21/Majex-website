@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EventService, Event } from '../../services/event.service';
-import { ContactService } from '../../services/contact.service';
+import { ContactService, ContactMessage, ContactStats } from '../../services/contact.service';
 
 @Component({
   selector: 'app-admin',
@@ -28,10 +28,10 @@ export class AdminComponent implements OnInit {
   isNewEvent = false;
   
   // Contacts
-  contacts: any[] = [];
-  contactStats: any = null;
+  contacts: ContactMessage[] = [];
+  contactStats: ContactStats | null = null;
   loadingContacts = false;
-  selectedContact: any = null;
+  selectedContact: ContactMessage | null = null;
   showContactModal = false;
   
   // Messages
@@ -46,13 +46,12 @@ export class AdminComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Vérifier auth
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-      if (!user) {
-        this.router.navigate(['/login']);
-      }
-    });
+    // Vérifier auth et récupérer l'utilisateur actuel
+    this.currentUser = this.authService.getCurrentUser();
+    if (!this.currentUser) {
+      this.router.navigate(['/login']);
+      return;
+    }
     
     // Charger les données
     this.loadEvents();
@@ -69,8 +68,9 @@ export class AdminComponent implements OnInit {
   loadEvents(): void {
     this.loadingEvents = true;
     this.eventService.getEvents().subscribe({
-      next: (response) => {
-        this.events = response.data.data;
+      next: (response: any) => {
+        // Gérer différentes structures de réponse
+        this.events = response.data?.data || response.data || response;
         this.loadingEvents = false;
       },
       error: (err) => {
@@ -107,9 +107,12 @@ export class AdminComponent implements OnInit {
   saveEvent(): void {
     if (!this.editingEvent) return;
 
+    // Convertir en Event complet
+    const eventData = this.editingEvent as Event;
+
     if (this.isNewEvent) {
-      this.eventService.createEvent(this.editingEvent).subscribe({
-        next: (response) => {
+      this.eventService.createEvent(eventData).subscribe({
+        next: () => {
           this.successMessage = 'Événement créé avec succès';
           this.loadEvents();
           this.closeEventModal();
@@ -120,8 +123,13 @@ export class AdminComponent implements OnInit {
         }
       });
     } else {
-      this.eventService.updateEvent(this.editingEvent.id!, this.editingEvent).subscribe({
-        next: (response) => {
+      if (!eventData.id) {
+        this.errorMessage = 'ID événement manquant';
+        return;
+      }
+      
+      this.eventService.updateEvent(eventData.id, eventData).subscribe({
+        next: () => {
           this.successMessage = 'Événement mis à jour';
           this.loadEvents();
           this.closeEventModal();
@@ -136,6 +144,11 @@ export class AdminComponent implements OnInit {
 
   deleteEvent(event: Event): void {
     if (!confirm(`Supprimer l'événement "${event.title}" ?`)) return;
+    
+    if (!event.id) {
+      this.errorMessage = 'ID événement manquant';
+      return;
+    }
 
     this.eventService.deleteEvent(event.id).subscribe({
       next: () => {
@@ -143,20 +156,25 @@ export class AdminComponent implements OnInit {
         this.loadEvents();
         this.clearMessages();
       },
-      error: (err) => {
+      error: () => {
         this.errorMessage = 'Erreur lors de la suppression';
       }
     });
   }
 
   publishEvent(event: Event): void {
+    if (!event.id) {
+      this.errorMessage = 'ID événement manquant';
+      return;
+    }
+    
     this.eventService.publishEvent(event.id).subscribe({
       next: () => {
         this.successMessage = 'Événement publié';
         this.loadEvents();
         this.clearMessages();
       },
-      error: (err) => {
+      error: () => {
         this.errorMessage = 'Erreur lors de la publication';
       }
     });
@@ -166,8 +184,9 @@ export class AdminComponent implements OnInit {
   loadContacts(): void {
     this.loadingContacts = true;
     this.contactService.getMessages().subscribe({
-      next: (response) => {
-        this.contacts = response.data.data;
+      next: (response: any) => {
+        // Gérer différentes structures de réponse
+        this.contacts = response.data?.data || response.data || response;
         this.loadingContacts = false;
       },
       error: (err) => {
@@ -179,19 +198,23 @@ export class AdminComponent implements OnInit {
 
   loadContactStats(): void {
     this.contactService.getStats().subscribe({
-      next: (response) => {
-        this.contactStats = response.data;
+      next: (response: any) => {
+        // Gérer différentes structures de réponse
+        this.contactStats = response.data || response;
+      },
+      error: (err) => {
+        console.error('Erreur chargement stats', err);
       }
     });
   }
 
-  viewContact(contact: any): void {
+  viewContact(contact: ContactMessage): void {
     this.selectedContact = contact;
     this.showContactModal = true;
     
-    // Marquer comme lu
-    if (contact.status === 'unread') {
-      this.contactService.updateMessage(contact.id, { status: 'read' }).subscribe({
+    // Marquer comme lu si non lu
+    if (contact.status === 'unread' && contact.id) {
+      this.contactService.markAsRead(contact.id).subscribe({
         next: () => {
           this.loadContacts();
           this.loadContactStats();
@@ -206,15 +229,20 @@ export class AdminComponent implements OnInit {
   }
 
   updateContactStatus(contactId: number, status: string): void {
-    this.contactService.updateMessage(contactId, { status }).subscribe({
-      next: () => {
-        this.successMessage = 'Statut mis à jour';
-        this.loadContacts();
-        this.loadContactStats();
-        this.closeContactModal();
-        this.clearMessages();
-      }
-    });
+    if (status === 'replied') {
+      this.contactService.markAsReplied(contactId).subscribe({
+        next: () => {
+          this.successMessage = 'Statut mis à jour';
+          this.loadContacts();
+          this.loadContactStats();
+          this.closeContactModal();
+          this.clearMessages();
+        },
+        error: () => {
+          this.errorMessage = 'Erreur lors de la mise à jour';
+        }
+      });
+    }
   }
 
   deleteContact(contactId: number): void {
@@ -227,6 +255,9 @@ export class AdminComponent implements OnInit {
         this.loadContactStats();
         this.closeContactModal();
         this.clearMessages();
+      },
+      error: () => {
+        this.errorMessage = 'Erreur lors de la suppression';
       }
     });
   }
@@ -234,9 +265,8 @@ export class AdminComponent implements OnInit {
   // ========== UTILS ==========
   logout(): void {
     if (confirm('Se déconnecter ?')) {
-      this.authService.logout().subscribe(() => {
-        this.router.navigate(['/login']);
-      });
+      this.authService.logout();
+      this.router.navigate(['/login']);
     }
   }
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ContactService } from '../../services/contact.service';  // ← AJOUTER
+import { ContactService } from '../../services/contact.service';
 
 @Component({
   selector: 'app-contact',
@@ -26,7 +26,6 @@ export class ContactComponent {
   submitMessage = '';
   submitSuccess = false;
 
-  // ← AJOUTER LE SERVICE ICI
   constructor(private contactService: ContactService) {}
 
   onSubmit() {
@@ -44,12 +43,12 @@ export class ContactComponent {
       message: `Budget: ${this.formData.budget || 'Non défini'}\nEntreprise: ${this.formData.company || 'N/A'}\n\n${this.formData.message}`
     };
 
-    // ← ENVOYER AU BACKEND
+    // Envoyer au backend
     this.contactService.sendMessage(messageData).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.isSubmitting = false;
         this.submitSuccess = true;
-        this.submitMessage = response.message;
+        this.submitMessage = response.message || 'Message envoyé avec succès !';
         
         // Réinitialiser le formulaire
         this.formData = {
@@ -69,7 +68,7 @@ export class ContactComponent {
           this.submitMessage = '';
         }, 5000);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isSubmitting = false;
         this.submitSuccess = false;
         this.submitMessage = err.error?.message || 'Une erreur est survenue. Veuillez réessayer.';

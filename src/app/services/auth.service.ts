@@ -4,8 +4,19 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface AuthResponse {
-  token: string;
-  user: {
+  success?: boolean;
+  message?: string;
+  data?: {
+    token: string;
+    user: {
+      id: number;
+      name: string;
+      email: string;
+    };
+  };
+  // Format alternatif (au cas où le backend change)
+  token?: string;
+  user?: {
     id: number;
     name: string;
     email: string;
@@ -25,9 +36,14 @@ export class AuthService {
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap(response => {
-        // Stocker le token et l'utilisateur
-        localStorage.setItem(this.tokenKey, response.token);
-        localStorage.setItem(this.userKey, JSON.stringify(response.user));
+        // Gérer les deux formats de réponse possibles
+        const token = response.data?.token || response.token;
+        const user = response.data?.user || response.user;
+
+        if (token && user) {
+          localStorage.setItem(this.tokenKey, token);
+          localStorage.setItem(this.userKey, JSON.stringify(user));
+        }
       })
     );
   }
@@ -46,7 +62,18 @@ export class AuthService {
   }
 
   getCurrentUser(): any {
-    const user = localStorage.getItem(this.userKey);
-    return user ? JSON.parse(user) : null;
+    const userStr = localStorage.getItem(this.userKey);
+    
+    // Protection contre undefined/null
+    if (!userStr || userStr === 'undefined' || userStr === 'null') {
+      return null;
+    }
+    
+    try {
+      return JSON.parse(userStr);
+    } catch (e) {
+      console.error('Erreur parsing user:', e);
+      return null;
+    }
   }
 }

@@ -342,10 +342,10 @@
           </div>
   
           <div class="pt-4 flex gap-3">
-            <button (click)="updateContactStatus(selectedContact.id, 'replied')" class="btn-majex-primary flex-1">
+            <button (click)="updateContactStatus(selectedContact.id!, 'replied')" class="btn-majex-primary flex-1">
               ✅ Marquer comme répondu
             </button>
-            <button (click)="deleteContact(selectedContact.id)" class="px-6 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition font-semibold">
+            <button (click)="deleteContact(selectedContact.id!)" class="px-6 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition font-semibold">
               🗑️ Supprimer
             </button>
           </div>
