@@ -1,0 +1,356 @@
+<div class="min-h-screen bg-majex-gray-50">
+    <!-- Header Admin -->
+    <header class="bg-white shadow-sm border-b border-majex-gray-200">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center">
+            <img src="assets/logos/0-removebg-preview 1.png" alt="MAJEX" class="h-12 mr-4">
+            <div>
+              <h1 class="text-2xl font-bold text-majex-secondary">Administration</h1>
+              <p class="text-sm text-majex-gray-600" *ngIf="currentUser">Connecté en tant que {{ currentUser.name }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="/" class="text-majex-primary hover:text-majex-accent transition">← Site web</a>
+            <button (click)="logout()" class="btn-majex-secondary">
+              Déconnexion
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+  
+    <!-- Messages de feedback -->
+    <div *ngIf="successMessage" class="container mx-auto px-6 pt-4">
+      <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+        {{ successMessage }}
+      </div>
+    </div>
+    <div *ngIf="errorMessage" class="container mx-auto px-6 pt-4">
+      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        {{ errorMessage }}
+      </div>
+    </div>
+  
+    <!-- Navigation Tabs -->
+    <div class="container mx-auto px-6 py-6">
+      <div class="bg-white rounded-xl shadow-sm p-2 inline-flex gap-2">
+        <button
+          (click)="setTab('events')"
+          [class.bg-majex-primary]="activeTab === 'events'"
+          [class.text-white]="activeTab === 'events'"
+          [class.text-majex-gray-600]="activeTab !== 'events'"
+          class="px-6 py-3 rounded-lg font-semibold transition"
+        >
+          📅 Événements ({{ events.length }})
+        </button>
+        <button
+          (click)="setTab('contacts')"
+          [class.bg-majex-primary]="activeTab === 'contacts'"
+          [class.text-white]="activeTab === 'contacts'"
+          [class.text-majex-gray-600]="activeTab !== 'contacts'"
+          class="px-6 py-3 rounded-lg font-semibold transition"
+        >
+          📧 Messages ({{ contacts.length }})
+        </button>
+        <button
+          (click)="setTab('stats')"
+          [class.bg-majex-primary]="activeTab === 'stats'"
+          [class.text-white]="activeTab === 'stats'"
+          [class.text-majex-gray-600]="activeTab !== 'stats'"
+          class="px-6 py-3 rounded-lg font-semibold transition"
+        >
+          📊 Statistiques
+        </button>
+      </div>
+    </div>
+  
+    <!-- Contenu principal -->
+    <div class="container mx-auto px-6 pb-12">
+      
+      <!-- TAB: Événements -->
+      <div *ngIf="activeTab === 'events'">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-majex-secondary">Gestion des Événements</h2>
+          <button (click)="openNewEventModal()" class="btn-majex-primary">
+            ➕ Nouvel événement
+          </button>
+        </div>
+  
+        <div *ngIf="loadingEvents" class="text-center py-12">
+          <p class="text-majex-gray-600">Chargement...</p>
+        </div>
+  
+        <div *ngIf="!loadingEvents && events.length === 0" class="majex-card text-center py-12">
+          <p class="text-majex-gray-600">Aucun événement pour le moment</p>
+        </div>
+  
+        <div class="grid gap-6" *ngIf="!loadingEvents && events.length > 0">
+          <div *ngFor="let event of events" class="majex-card">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-3">
+                  <h3 class="text-xl font-bold text-majex-secondary">{{ event.title }}</h3>
+                  <span
+                    class="px-3 py-1 rounded-full text-xs font-semibold"
+                    [class.bg-green-100]="event.status === 'published'"
+                    [class.text-green-700]="event.status === 'published'"
+                    [class.bg-yellow-100]="event.status === 'draft'"
+                    [class.text-yellow-700]="event.status === 'draft'"
+                    [class.bg-red-100]="event.status === 'cancelled'"
+                    [class.text-red-700]="event.status === 'cancelled'"
+                    [class.bg-gray-100]="event.status === 'completed'"
+                    [class.text-gray-700]="event.status === 'completed'"
+                  >
+                    {{ event.status }}
+                  </span>
+                </div>
+                <p class="text-majex-gray-600 mb-3">{{ event.description.substring(0, 150) }}...</p>
+                <div class="flex flex-wrap gap-4 text-sm text-majex-gray-600">
+                  <span>📍 {{ event.location }}</span>
+                  <span>📅 {{ event.date | date:'dd/MM/yyyy HH:mm' }}</span>
+                  <span>🎯 {{ event.type }}</span>
+                  <span *ngIf="event.max_participants">👥 {{ event.current_participants }}/{{ event.max_participants }}</span>
+                  <span *ngIf="event.price">💰 {{ event.formatted_price }}</span>
+                </div>
+              </div>
+              <div class="flex gap-2 ml-4">
+                <button (click)="openEditEventModal(event)" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition text-sm font-semibold">
+                  ✏️ Modifier
+                </button>
+                <button *ngIf="event.status === 'draft'" (click)="publishEvent(event)" class="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition text-sm font-semibold">
+                  ✅ Publier
+                </button>
+                <button (click)="deleteEvent(event)" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition text-sm font-semibold">
+                  🗑️ Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- TAB: Messages de contact -->
+      <div *ngIf="activeTab === 'contacts'">
+        <h2 class="text-2xl font-bold text-majex-secondary mb-6">Messages de Contact</h2>
+  
+        <div *ngIf="contactStats" class="grid md:grid-cols-4 gap-4 mb-6">
+          <div class="majex-card bg-blue-50 border-l-4 border-blue-500">
+            <p class="text-sm text-blue-600 font-semibold">Total</p>
+            <p class="text-3xl font-bold text-blue-700">{{ contactStats.total }}</p>
+          </div>
+          <div class="majex-card bg-yellow-50 border-l-4 border-yellow-500">
+            <p class="text-sm text-yellow-600 font-semibold">Non lus</p>
+            <p class="text-3xl font-bold text-yellow-700">{{ contactStats.unread }}</p>
+          </div>
+          <div class="majex-card bg-green-50 border-l-4 border-green-500">
+            <p class="text-sm text-green-600 font-semibold">Traités</p>
+            <p class="text-3xl font-bold text-green-700">{{ contactStats.replied }}</p>
+          </div>
+          <div class="majex-card bg-purple-50 border-l-4 border-purple-500">
+            <p class="text-sm text-purple-600 font-semibold">Cette semaine</p>
+            <p class="text-3xl font-bold text-purple-700">{{ contactStats.this_week }}</p>
+          </div>
+        </div>
+  
+        <div *ngIf="loadingContacts" class="text-center py-12">
+          <p class="text-majex-gray-600">Chargement...</p>
+        </div>
+  
+        <div class="space-y-4" *ngIf="!loadingContacts">
+          <div *ngFor="let contact of contacts" class="majex-card hover:shadow-lg transition cursor-pointer" (click)="viewContact(contact)">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <span *ngIf="contact.status === 'unread'" class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                  <h4 class="font-bold text-majex-secondary">{{ contact.name }}</h4>
+                  <span class="text-sm text-majex-gray-500">{{ contact.email }}</span>
+                </div>
+                <p class="text-majex-secondary font-semibold mb-1">{{ contact.subject }}</p>
+                <p class="text-majex-gray-600 text-sm">{{ contact.message.substring(0, 100) }}...</p>
+                <p class="text-xs text-majex-gray-400 mt-2">{{ contact.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+              <span
+                class="px-3 py-1 rounded-full text-xs font-semibold"
+                [class.bg-blue-100]="contact.status === 'unread'"
+                [class.text-blue-700]="contact.status === 'unread'"
+                [class.bg-gray-100]="contact.status === 'read'"
+                [class.text-gray-700]="contact.status === 'read'"
+                [class.bg-green-100]="contact.status === 'replied'"
+                [class.text-green-700]="contact.status === 'replied'"
+              >
+                {{ contact.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- TAB: Statistiques -->
+      <div *ngIf="activeTab === 'stats'">
+        <h2 class="text-2xl font-bold text-majex-secondary mb-6">Statistiques Générales</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="majex-card bg-majex-primary text-white">
+            <h3 class="text-lg font-semibold mb-2">Événements</h3>
+            <p class="text-4xl font-bold">{{ events.length }}</p>
+            <p class="text-sm opacity-90 mt-2">Total des événements</p>
+          </div>
+          <div class="majex-card bg-majex-accent text-white">
+            <h3 class="text-lg font-semibold mb-2">Messages</h3>
+            <p class="text-4xl font-bold">{{ contacts.length }}</p>
+            <p class="text-sm opacity-90 mt-2">Messages reçus</p>
+          </div>
+          <div class="majex-card bg-majex-secondary text-white">
+            <h3 class="text-lg font-semibold mb-2">Non traités</h3>
+            <p class="text-4xl font-bold">{{ contactStats?.unread || 0 }}</p>
+            <p class="text-sm opacity-90 mt-2">À traiter</p>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  
+    <!-- MODAL: Événement (Créer/Modifier) -->
+    <div *ngIf="showEventModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold text-majex-secondary">
+            {{ isNewEvent ? 'Nouvel événement' : 'Modifier l\'événement' }}
+          </h3>
+          <button (click)="closeEventModal()" class="text-majex-gray-400 hover:text-majex-gray-600 text-3xl">&times;</button>
+        </div>
+  
+        <form (ngSubmit)="saveEvent()" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-majex-secondary mb-2">Titre *</label>
+            <input type="text" [(ngModel)]="editingEvent!.title" name="title" required class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg focus:ring-2 focus:ring-majex-primary">
+          </div>
+  
+          <div>
+            <label class="block text-sm font-medium text-majex-secondary mb-2">Description *</label>
+            <textarea [(ngModel)]="editingEvent!.description" name="description" required rows="4" class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg focus:ring-2 focus:ring-majex-primary"></textarea>
+          </div>
+  
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-majex-secondary mb-2">Type *</label>
+              <select [(ngModel)]="editingEvent!.type" name="type" required class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg">
+                <option value="formation">Formation</option>
+                <option value="seminaire">Séminaire</option>
+                <option value="conference">Conférence</option>
+                <option value="ceremonie">Cérémonie</option>
+              </select>
+            </div>
+  
+            <div>
+              <label class="block text-sm font-medium text-majex-secondary mb-2">Statut *</label>
+              <select [(ngModel)]="editingEvent!.status" name="status" required class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg">
+                <option value="draft">Brouillon</option>
+                <option value="published">Publié</option>
+                <option value="cancelled">Annulé</option>
+                <option value="completed">Terminé</option>
+              </select>
+            </div>
+          </div>
+  
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-majex-secondary mb-2">Date de début *</label>
+              <input type="datetime-local" [(ngModel)]="editingEvent!.date" name="date" required class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg">
+            </div>
+  
+            <div>
+              <label class="block text-sm font-medium text-majex-secondary mb-2">Date de fin</label>
+              <input type="datetime-local" [(ngModel)]="editingEvent!.end_date" name="end_date" class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg">
+            </div>
+          </div>
+  
+          <div>
+            <label class="block text-sm font-medium text-majex-secondary mb-2">Lieu *</label>
+            <input type="text" [(ngModel)]="editingEvent!.location" name="location" required class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg">
+          </div>
+  
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-majex-secondary mb-2">Participants max</label>
+              <input type="number" [(ngModel)]="editingEvent!.max_participants" name="max_participants" class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg">
+            </div>
+  
+            <div>
+              <label class="block text-sm font-medium text-majex-secondary mb-2">Prix (FCFA)</label>
+              <input type="number" [(ngModel)]="editingEvent!.price" name="price" class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg">
+            </div>
+          </div>
+  
+          <div>
+            <label class="block text-sm font-medium text-majex-secondary mb-2">URL Image</label>
+            <input type="url" [(ngModel)]="editingEvent!.image_url" name="image_url" class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg">
+          </div>
+  
+          <div class="flex justify-end gap-3 pt-4">
+            <button type="button" (click)="closeEventModal()" class="btn-majex-secondary">Annuler</button>
+            <button type="submit" class="btn-majex-primary">{{ isNewEvent ? 'Créer' : 'Enregistrer' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <!-- MODAL: Détails contact -->
+    <div *ngIf="showContactModal && selectedContact" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-2xl font-bold text-majex-secondary">Détails du message</h3>
+          <button (click)="closeContactModal()" class="text-majex-gray-400 hover:text-majex-gray-600 text-3xl">&times;</button>
+        </div>
+  
+        <div class="space-y-4">
+          <div>
+            <p class="text-sm text-majex-gray-600 font-semibold">De :</p>
+            <p class="text-majex-secondary font-bold">{{ selectedContact.name }}</p>
+            <p class="text-sm text-majex-gray-600">{{ selectedContact.email }}</p>
+            <p class="text-sm text-majex-gray-600" *ngIf="selectedContact.phone">{{ selectedContact.phone }}</p>
+          </div>
+  
+          <div>
+            <p class="text-sm text-majex-gray-600 font-semibold">Sujet :</p>
+            <p class="text-majex-secondary font-bold">{{ selectedContact.subject }}</p>
+          </div>
+  
+          <div>
+            <p class="text-sm text-majex-gray-600 font-semibold">Message :</p>
+            <p class="text-majex-secondary whitespace-pre-wrap">{{ selectedContact.message }}</p>
+          </div>
+  
+          <div>
+            <p class="text-sm text-majex-gray-600 font-semibold">Reçu le :</p>
+            <p class="text-majex-secondary">{{ selectedContact.created_at | date:'dd/MM/yyyy à HH:mm' }}</p>
+          </div>
+  
+          <div>
+            <p class="text-sm text-majex-gray-600 font-semibold">Statut :</p>
+            <span
+              class="px-3 py-1 rounded-full text-sm font-semibold inline-block mt-1"
+              [class.bg-blue-100]="selectedContact.status === 'unread'"
+              [class.text-blue-700]="selectedContact.status === 'unread'"
+              [class.bg-gray-100]="selectedContact.status === 'read'"
+              [class.text-gray-700]="selectedContact.status === 'read'"
+              [class.bg-green-100]="selectedContact.status === 'replied'"
+              [class.text-green-700]="selectedContact.status === 'replied'"
+            >
+              {{ selectedContact.status }}
+            </span>
+          </div>
+  
+          <div class="pt-4 flex gap-3">
+            <button (click)="updateContactStatus(selectedContact.id, 'replied')" class="btn-majex-primary flex-1">
+              ✅ Marquer comme répondu
+            </button>
+            <button (click)="deleteContact(selectedContact.id)" class="px-6 py-3 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition font-semibold">
+              🗑️ Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
