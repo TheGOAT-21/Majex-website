@@ -1,1 +1,182 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MAJEX CONSULTING - Design Corporate Professionnel */
+:root {
+  /* Couleurs principales MAJEX (basées sur le logo) */
+  --majex-primary: #17894C;  /* Vert du logo */
+  --majex-secondary: #2D3748; /* Gris foncé professionnel */
+  --majex-accent: #E16E30;    /* Orange du logo */
+
+  /* Couleurs neutres professionnelles */
+  --majex-white: #FFFFFF;
+  --majex-gray-50: #F7FAFC;
+  --majex-gray-100: #EDF2F7;
+  --majex-gray-200: #E2E8F0;
+  --majex-gray-300: #CBD5E0;
+  --majex-gray-400: #A0AEC0;
+  --majex-gray-500: #718096;
+  --majex-gray-600: #4A5568;
+  --majex-gray-700: #2D3748;
+  --majex-gray-800: #1A202C;
+  --majex-gray-900: #171923;
+
+  /* Couleurs d'état subtiles */
+  --majex-success: #38A169;
+  --majex-warning: #D69E2E;
+  --majex-error: #E53E3E;
+}
+
+/* Classes utilitaires MAJEX Corporate */
+.bg-majex-primary { background-color: var(--majex-primary); }
+.bg-majex-secondary { background-color: var(--majex-secondary); }
+.bg-majex-accent { background-color: var(--majex-accent); }
+.bg-majex-gray-50 { background-color: var(--majex-gray-50); }
+
+.text-majex-primary { color: var(--majex-primary); }
+.text-majex-secondary { color: var(--majex-secondary); }
+.text-majex-accent { color: var(--majex-accent); }
+.text-majex-gray-400 { color: var(--majex-gray-400); }
+.text-majex-gray-600 { color: var(--majex-gray-600); }
+.text-majex-gray-200 { color: var(--majex-gray-200); }
+
+.border-majex-primary { border-color: var(--majex-primary); }
+.border-majex-secondary { border-color: var(--majex-secondary); }
+.border-majex-accent { border-color: var(--majex-accent); }
+.border-majex-gray-300 { border-color: var(--majex-gray-300); }
+.border-majex-gray-700 { border-color: var(--majex-gray-700); }
+
+/* Gradient Corporate */
+.bg-gradient-majex {
+  background: linear-gradient(135deg, var(--majex-primary) 0%, var(--majex-accent) 100%);
+}
+
+.bg-gradient-majex-soft {
+  background: linear-gradient(135deg, var(--majex-gray-50) 0%, var(--majex-gray-100) 100%);
+}
+
+/* Hover effects professionnels */
+.hover-majex-primary:hover {
+  background-color: var(--majex-accent);
+  transform: translateY(-1px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(44, 82, 130, 0.15);
+}
+
+.hover-majex-secondary:hover {
+  background-color: var(--majex-gray-600);
+  transform: translateY(-1px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(45, 55, 72, 0.15);
+}
+
+/* Cards modernes */
+.majex-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.majex-card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-4px);
+}
+
+/* Boutons Corporate */
+.btn-majex-primary {
+  background-color: var(--majex-primary);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.btn-majex-primary:hover {
+  background-color: var(--majex-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 82, 130, 0.25);
+}
+
+.btn-majex-secondary {
+  background-color: transparent;
+  color: var(--majex-primary);
+  border: 2px solid var(--majex-primary);
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.btn-majex-secondary:hover {
+  background-color: var(--majex-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 82, 130, 0.25);
+}
+
+/* Sections Corporate */
+.section-corporate {
+  background: var(--majex-gray-50);
+  border-top: 1px solid var(--majex-gray-200);
+}
+
+.section-highlight {
+  background: linear-gradient(135deg, var(--majex-gray-50) 0%, var(--majex-white) 100%);
+}
+
+/* Animations douces */
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Classes utilitaires supplémentaires */
+.section-bg-orange {
+  background: linear-gradient(135deg, var(--majex-gray-50) 0%, #FFF7ED 100%);
+}
+
+.section-bg-green {
+  background: linear-gradient(135deg, var(--majex-gray-50) 0%, #F0FDF4 100%);
+}
+
+.bg-majex-orange {
+  background-color: #EA580C;
+}
+
+.bg-majex-green {
+  background-color: #16A34A;
+}
+
+.text-majex-orange {
+  color: #EA580C;
+}
+
+.text-majex-green {
+  color: #16A34A;
+}
+
+/* Focus states for form elements */
+.focus\:ring-majex-primary:focus {
+  --tw-ring-color: var(--majex-primary);
+}
+
+/* Responsive et accessibilité */
+@media (max-width: 768px) {
+  .majex-card { padding: 1.5rem; }
+  .btn-majex-primary, .btn-majex-secondary { padding: 10px 20px; }
+}
