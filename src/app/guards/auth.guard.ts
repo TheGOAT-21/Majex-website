@@ -15,7 +15,8 @@ export class AuthGuard implements CanActivate {
     if (this.authService.isAuthenticated()) {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      // Redirection vers la route de login SÉCURISÉE
+      this.router.navigate(['/mjx-admin-login-secure-2025']);
       return false;
     }
   }

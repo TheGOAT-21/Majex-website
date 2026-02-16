@@ -7,11 +7,13 @@ export const routes: Routes = [
     loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent)
   },
   {
-    path: 'login',
+    // Route secrète pour la connexion admin
+    path: 'mjx-admin-login-secure-2025',
     loadComponent: () => import('./components/login/login.component').then(m => m.LoginComponent)
   },
   {
-    path: 'admin',
+    // Route secrète pour le panneau d'administration
+    path: 'mjx-admin-dashboard-secure-2025',
     loadComponent: () => import('./components/admin/admin.component').then(m => m.AdminComponent),
     canActivate: [AuthGuard]
   },

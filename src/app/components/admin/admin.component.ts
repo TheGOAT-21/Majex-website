@@ -5,17 +5,19 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EventService, Event } from '../../services/event.service';
 import { ContactService, ContactMessage, ContactStats } from '../../services/contact.service';
+import { AdminSidebarComponent } from './sidebar/sidebar.component';
+import { AdminNavbarComponent } from './navbar/navbar.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminSidebarComponent, AdminNavbarComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
   // Navigation
-  activeTab: 'events' | 'contacts' | 'stats' = 'events';
+  activeTab: 'dashboard' | 'events' | 'contacts' | 'stats' | 'settings' = 'dashboard';
   
   // User info
   currentUser: any = null;
@@ -60,7 +62,7 @@ export class AdminComponent implements OnInit {
   }
 
   // ========== NAVIGATION ==========
-  setTab(tab: 'events' | 'contacts' | 'stats'): void {
+  setTab(tab: 'dashboard' | 'events' | 'contacts' | 'stats' | 'settings'): void {
     this.activeTab = tab;
   }
 
@@ -69,7 +71,6 @@ export class AdminComponent implements OnInit {
     this.loadingEvents = true;
     this.eventService.getEvents().subscribe({
       next: (response: any) => {
-        // Gérer différentes structures de réponse
         this.events = response.data?.data || response.data || response;
         this.loadingEvents = false;
       },
@@ -107,7 +108,6 @@ export class AdminComponent implements OnInit {
   saveEvent(): void {
     if (!this.editingEvent) return;
 
-    // Convertir en Event complet
     const eventData = this.editingEvent as Event;
 
     if (this.isNewEvent) {
@@ -185,7 +185,6 @@ export class AdminComponent implements OnInit {
     this.loadingContacts = true;
     this.contactService.getMessages().subscribe({
       next: (response: any) => {
-        // Gérer différentes structures de réponse
         this.contacts = response.data?.data || response.data || response;
         this.loadingContacts = false;
       },
@@ -199,7 +198,6 @@ export class AdminComponent implements OnInit {
   loadContactStats(): void {
     this.contactService.getStats().subscribe({
       next: (response: any) => {
-        // Gérer différentes structures de réponse
         this.contactStats = response.data || response;
       },
       error: (err) => {
@@ -212,7 +210,6 @@ export class AdminComponent implements OnInit {
     this.selectedContact = contact;
     this.showContactModal = true;
     
-    // Marquer comme lu si non lu
     if (contact.status === 'unread' && contact.id) {
       this.contactService.markAsRead(contact.id).subscribe({
         next: () => {

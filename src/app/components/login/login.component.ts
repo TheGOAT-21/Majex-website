@@ -34,7 +34,8 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
         console.log('Connexion réussie', response);
-        this.router.navigate(['/admin']);
+        // Redirection vers la route admin SÉCURISÉE
+        this.router.navigate(['/mjx-admin-dashboard-secure-2025']);
       },
       error: (error) => {
         console.error('Erreur de connexion', error);
