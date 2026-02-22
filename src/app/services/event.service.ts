@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AuthService } from './auth.service';
 
 export interface Event {
   id?: number;
@@ -28,40 +27,34 @@ export interface Event {
 export class EventService {
   private apiUrl = `${environment.apiUrl}/api/events`;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
+  // L'interceptor ajoute automatiquement le token Bearer sur toutes les requêtes
+  getEvents(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 
-  getEvents(): Observable<Event[]> {
-    return this.http.get<Event[]>(this.apiUrl, { headers: this.getHeaders() });
+  getEvent(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  getEvent(id: number): Observable<Event> {
-    return this.http.get<Event>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  createEvent(event: Partial<Event>): Observable<any> {
+    return this.http.post<any>(this.apiUrl, event);
   }
 
-  createEvent(event: Event): Observable<Event> {
-    return this.http.post<Event>(this.apiUrl, event, { headers: this.getHeaders() });
-  }
-
-  updateEvent(id: number, event: Event): Observable<Event> {
-    return this.http.put<Event>(`${this.apiUrl}/${id}`, event, { headers: this.getHeaders() });
+  updateEvent(id: number, event: Partial<Event>): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, event);
   }
 
   deleteEvent(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  publishEvent(id: number): Observable<Event> {
-    return this.http.patch<Event>(`${this.apiUrl}/${id}/publish`, {}, { headers: this.getHeaders() });
+  publishEvent(id: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${id}/publish`, {});
+  }
+
+  cancelEvent(id: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${id}/cancel`, {});
   }
 }

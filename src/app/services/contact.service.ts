@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { AuthService } from './auth.service';
 
 export interface ContactMessage {
   id?: number;
@@ -29,46 +28,35 @@ export interface ContactStats {
 export class ContactService {
   private apiUrl = `${environment.apiUrl}/api/contacts`;
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-  }
-
-  // Pour le formulaire public (pas d'auth)
+  // Formulaire public (sans auth)
   sendMessage(data: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/api/contacts`, data);
+    return this.http.post(`${environment.apiUrl}/api/contact`, data);
   }
 
-  // Pour l'admin (avec auth)
-  getMessages(): Observable<ContactMessage[]> {
-    return this.http.get<ContactMessage[]>(this.apiUrl, { headers: this.getHeaders() });
+  // Admin — l'interceptor ajoute automatiquement le token
+  getMessages(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 
-  getMessage(id: number): Observable<ContactMessage> {
-    return this.http.get<ContactMessage>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  getMessage(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  markAsRead(id: number): Observable<ContactMessage> {
-    return this.http.patch<ContactMessage>(`${this.apiUrl}/${id}/read`, {}, { headers: this.getHeaders() });
+  markAsRead(id: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, { status: 'read' });
   }
 
-  markAsReplied(id: number): Observable<ContactMessage> {
-    return this.http.patch<ContactMessage>(`${this.apiUrl}/${id}/replied`, {}, { headers: this.getHeaders() });
+  markAsReplied(id: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, { status: 'replied' });
   }
 
   deleteMessage(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  getStats(): Observable<ContactStats> {
-    return this.http.get<ContactStats>(`${this.apiUrl}/stats`, { headers: this.getHeaders() });
+  getStats(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/stats`);
   }
 }

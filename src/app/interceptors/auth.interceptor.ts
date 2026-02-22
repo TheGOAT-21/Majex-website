@@ -6,7 +6,7 @@ import { catchError, throwError } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const token = localStorage.getItem('auth_token');
-  
+
   // Ajouter le token si présent
   if (token) {
     req = req.clone({
@@ -15,14 +15,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
   }
-  
-  // Gérer les erreurs
+
   return next(req).pipe(
     catchError((error) => {
       if (error.status === 401) {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('auth_user');
-        router.navigate(['/login']);
+        // Redirection vers la route sécurisée
+        router.navigate(['/mjx-admin-login-secure-2025']);
       }
       return throwError(() => error);
     })
