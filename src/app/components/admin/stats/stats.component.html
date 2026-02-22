@@ -1,0 +1,122 @@
+<div>
+    <h2 class="text-2xl font-bold text-majex-secondary mb-8">Statistiques</h2>
+  
+    <!-- KPIs principaux -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Total événements</p>
+        <p class="text-4xl font-bold text-majex-secondary">{{ events.length }}</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Publiés</p>
+        <p class="text-4xl font-bold text-majex-secondary">{{ publishedEvents }}</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Total messages</p>
+        <p class="text-4xl font-bold text-majex-secondary">{{ contacts.length }}</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Taux de réponse</p>
+        <p class="text-4xl font-bold text-majex-secondary">{{ replyRate }}%</p>
+      </div>
+    </div>
+  
+    <!-- Détails événements -->
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <h3 class="font-bold text-majex-secondary mb-5">Répartition des événements</h3>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-500">Publiés</span>
+            <div class="flex items-center gap-3">
+              <div class="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-majex-primary rounded-full"
+                  [style.width.%]="events.length ? (publishedEvents / events.length * 100) : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-majex-secondary w-6 text-right">{{ publishedEvents }}</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-500">Brouillons</span>
+            <div class="flex items-center gap-3">
+              <div class="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-gray-400 rounded-full"
+                  [style.width.%]="events.length ? (draftEvents / events.length * 100) : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-majex-secondary w-6 text-right">{{ draftEvents }}</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-500">Autres</span>
+            <div class="flex items-center gap-3">
+              <div class="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-gray-200 rounded-full"
+                  [style.width.%]="events.length ? ((events.length - publishedEvents - draftEvents) / events.length * 100) : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-majex-secondary w-6 text-right">{{ events.length - publishedEvents - draftEvents }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <h3 class="font-bold text-majex-secondary mb-5">Répartition des messages</h3>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-500">Non lus</span>
+            <div class="flex items-center gap-3">
+              <div class="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-majex-secondary rounded-full"
+                  [style.width.%]="contactStats?.total ? (contactStats!.unread / contactStats!.total * 100) : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-majex-secondary w-6 text-right">{{ contactStats?.unread || 0 }}</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-500">Répondus</span>
+            <div class="flex items-center gap-3">
+              <div class="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-majex-primary rounded-full"
+                  [style.width.%]="contactStats?.total ? (contactStats!.replied / contactStats!.total * 100) : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-majex-secondary w-6 text-right">{{ contactStats?.replied || 0 }}</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-500">Cette semaine</span>
+            <div class="flex items-center gap-3">
+              <div class="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-majex-accent rounded-full"
+                  [style.width.%]="contactStats?.total ? (contactStats!.this_week / contactStats!.total * 100) : 0"></div>
+              </div>
+              <span class="text-sm font-semibold text-majex-secondary w-6 text-right">{{ contactStats?.this_week || 0 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Résumé global -->
+    <div class="bg-majex-secondary rounded-xl p-8 text-white">
+      <h3 class="font-bold text-lg mb-6">Résumé global</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div>
+          <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Événements actifs</p>
+          <p class="text-2xl font-bold">{{ publishedEvents }}</p>
+        </div>
+        <div>
+          <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Msgs en attente</p>
+          <p class="text-2xl font-bold">{{ contactStats?.unread || 0 }}</p>
+        </div>
+        <div>
+          <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Cette semaine</p>
+          <p class="text-2xl font-bold">{{ contactStats?.this_week || 0 }}</p>
+        </div>
+        <div>
+          <p class="text-white/60 text-xs uppercase tracking-wider mb-1">Taux réponse</p>
+          <p class="text-2xl font-bold">{{ replyRate }}%</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  

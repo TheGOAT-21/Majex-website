@@ -2,13 +2,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-admin-navbar',
+  selector: 'app-navbar',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
-export class AdminNavbarComponent {
+export class NavbarComponent {
   @Input() currentUser: any;
   @Input() activeTab: string = 'dashboard';
   @Output() logoutClick = new EventEmitter<void>();

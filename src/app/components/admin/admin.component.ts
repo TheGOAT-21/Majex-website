@@ -5,21 +5,33 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { EventService, Event } from '../../services/event.service';
 import { ContactService, ContactMessage, ContactStats } from '../../services/contact.service';
-import { AdminSidebarComponent } from './sidebar/sidebar.component';
-import { AdminNavbarComponent } from './navbar/navbar.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { NavbarComponent } from './navbar/navbar.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { EventsComponent } from './events/events.component';
+import { ContactsComponent } from './contacts/contacts.component';
+import { StatsComponent } from './stats/stats.component';
+import { SettingsComponent } from './settings/settings.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminSidebarComponent, AdminNavbarComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SidebarComponent,
+    NavbarComponent,
+    DashboardComponent,
+    EventsComponent,
+    ContactsComponent,
+    StatsComponent,
+    SettingsComponent
+  ],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
-  // Navigation
   activeTab: 'dashboard' | 'events' | 'contacts' | 'stats' | 'settings' = 'dashboard';
-
-  // User info
   currentUser: any = null;
 
   // Events
@@ -36,7 +48,6 @@ export class AdminComponent implements OnInit {
   selectedContact: ContactMessage | null = null;
   showContactModal = false;
 
-  // Messages de feedback
   successMessage = '';
   errorMessage = '';
 
@@ -58,13 +69,11 @@ export class AdminComponent implements OnInit {
     this.loadContactStats();
   }
 
-  // ========== NAVIGATION ==========
-  // Méthode appelée par l'événement (tabChange) de la sidebar
   onTabChange(tab: string): void {
     this.activeTab = tab as 'dashboard' | 'events' | 'contacts' | 'stats' | 'settings';
   }
 
-  // ========== EVENTS CRUD ==========
+  // ========== EVENTS ==========
   loadEvents(): void {
     this.loadingEvents = true;
     this.eventService.getEvents().subscribe({
@@ -81,14 +90,7 @@ export class AdminComponent implements OnInit {
 
   openNewEventModal(): void {
     this.isNewEvent = true;
-    this.editingEvent = {
-      title: '',
-      description: '',
-      type: 'formation',
-      date: '',
-      location: '',
-      status: 'draft'
-    };
+    this.editingEvent = { title: '', description: '', type: 'formation', date: '', location: '', status: 'draft' };
     this.showEventModal = true;
   }
 
@@ -105,58 +107,34 @@ export class AdminComponent implements OnInit {
 
   saveEvent(): void {
     if (!this.editingEvent) return;
-
     if (this.isNewEvent) {
       this.eventService.createEvent(this.editingEvent).subscribe({
-        next: () => {
-          this.showSuccess('Événement créé avec succès');
-          this.loadEvents();
-          this.closeEventModal();
-        },
-        error: (err: any) => {
-          this.showError(err.error?.message || 'Erreur lors de la création');
-        }
+        next: () => { this.showSuccess('Événement créé'); this.loadEvents(); this.closeEventModal(); },
+        error: (err: any) => this.showError(err.error?.message || 'Erreur création')
       });
     } else {
-      if (!this.editingEvent.id) {
-        this.showError('ID événement manquant');
-        return;
-      }
+      if (!this.editingEvent.id) { this.showError('ID manquant'); return; }
       this.eventService.updateEvent(this.editingEvent.id, this.editingEvent).subscribe({
-        next: () => {
-          this.showSuccess('Événement mis à jour');
-          this.loadEvents();
-          this.closeEventModal();
-        },
-        error: (err: any) => {
-          this.showError(err.error?.message || 'Erreur lors de la mise à jour');
-        }
+        next: () => { this.showSuccess('Événement mis à jour'); this.loadEvents(); this.closeEventModal(); },
+        error: (err: any) => this.showError(err.error?.message || 'Erreur mise à jour')
       });
     }
   }
 
   deleteEvent(event: Event): void {
-    if (!confirm(`Supprimer l'événement "${event.title}" ?`)) return;
-    if (!event.id) { this.showError('ID événement manquant'); return; }
-
+    if (!confirm(`Supprimer "${event.title}" ?`)) return;
+    if (!event.id) { this.showError('ID manquant'); return; }
     this.eventService.deleteEvent(event.id).subscribe({
-      next: () => {
-        this.showSuccess('Événement supprimé');
-        this.loadEvents();
-      },
-      error: () => this.showError('Erreur lors de la suppression')
+      next: () => { this.showSuccess('Événement supprimé'); this.loadEvents(); },
+      error: () => this.showError('Erreur suppression')
     });
   }
 
   publishEvent(event: Event): void {
-    if (!event.id) { this.showError('ID événement manquant'); return; }
-
+    if (!event.id) { this.showError('ID manquant'); return; }
     this.eventService.publishEvent(event.id).subscribe({
-      next: () => {
-        this.showSuccess('Événement publié');
-        this.loadEvents();
-      },
-      error: () => this.showError('Erreur lors de la publication')
+      next: () => { this.showSuccess('Événement publié'); this.loadEvents(); },
+      error: () => this.showError('Erreur publication')
     });
   }
 
@@ -168,32 +146,23 @@ export class AdminComponent implements OnInit {
         this.contacts = response.data?.data || response.data || response;
         this.loadingContacts = false;
       },
-      error: (err: any) => {
-        console.error('Erreur chargement contacts', err);
-        this.loadingContacts = false;
-      }
+      error: (err: any) => { console.error(err); this.loadingContacts = false; }
     });
   }
 
   loadContactStats(): void {
     this.contactService.getStats().subscribe({
-      next: (response: any) => {
-        this.contactStats = response.data || response;
-      },
-      error: (err: any) => console.error('Erreur stats contacts', err)
+      next: (response: any) => { this.contactStats = response.data || response; },
+      error: (err: any) => console.error(err)
     });
   }
 
   viewContact(contact: ContactMessage): void {
     this.selectedContact = contact;
     this.showContactModal = true;
-
     if (contact.status === 'unread' && contact.id) {
       this.contactService.markAsRead(contact.id).subscribe({
-        next: () => {
-          this.loadContacts();
-          this.loadContactStats();
-        }
+        next: () => { this.loadContacts(); this.loadContactStats(); }
       });
     }
   }
@@ -203,31 +172,20 @@ export class AdminComponent implements OnInit {
     this.selectedContact = null;
   }
 
-  updateContactStatus(contactId: number, status: string): void {
-    if (status === 'replied') {
-      this.contactService.markAsReplied(contactId).subscribe({
-        next: () => {
-          this.showSuccess('Statut mis à jour');
-          this.loadContacts();
-          this.loadContactStats();
-          this.closeContactModal();
-        },
-        error: () => this.showError('Erreur lors de la mise à jour')
+  updateContactStatus(event: { id: number; status: string }): void {
+    if (event.status === 'replied') {
+      this.contactService.markAsReplied(event.id).subscribe({
+        next: () => { this.showSuccess('Statut mis à jour'); this.loadContacts(); this.loadContactStats(); this.closeContactModal(); },
+        error: () => this.showError('Erreur mise à jour')
       });
     }
   }
 
   deleteContact(contactId: number): void {
     if (!confirm('Supprimer ce message ?')) return;
-
     this.contactService.deleteMessage(contactId).subscribe({
-      next: () => {
-        this.showSuccess('Message supprimé');
-        this.loadContacts();
-        this.loadContactStats();
-        this.closeContactModal();
-      },
-      error: () => this.showError('Erreur lors de la suppression')
+      next: () => { this.showSuccess('Message supprimé'); this.loadContacts(); this.loadContactStats(); this.closeContactModal(); },
+      error: () => this.showError('Erreur suppression')
     });
   }
 

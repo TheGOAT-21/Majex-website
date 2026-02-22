@@ -1,0 +1,191 @@
+<div>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-majex-secondary">Gestion des Événements</h2>
+      <button (click)="openNew.emit()"
+        class="px-5 py-2.5 bg-majex-primary text-white rounded-lg hover:bg-majex-accent transition text-sm font-semibold">
+        + Nouvel événement
+      </button>
+    </div>
+  
+    <!-- Loading -->
+    <div *ngIf="loadingEvents" class="flex justify-center py-16">
+      <div class="w-8 h-8 border-2 border-majex-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  
+    <!-- Empty -->
+    <div *ngIf="!loadingEvents && events.length === 0"
+      class="bg-white rounded-xl p-16 text-center border border-gray-100">
+      <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
+      <p class="text-gray-400 text-sm">Aucun événement pour le moment</p>
+    </div>
+  
+    <!-- Events list -->
+    <div class="space-y-3" *ngIf="!loadingEvents && events.length > 0">
+      <div *ngFor="let event of events"
+        class="bg-white rounded-xl p-5 border border-gray-100 hover:border-gray-200 hover:shadow-sm transition">
+        <div class="flex justify-between items-start gap-4">
+  
+          <!-- Left: info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2.5 mb-2">
+              <h3 class="font-bold text-majex-secondary truncate">{{ event.title }}</h3>
+              <span class="text-xs px-2 py-0.5 rounded border flex-shrink-0"
+                [class.border-green-200]="event.status === 'published'"
+                [class.text-green-600]="event.status === 'published'"
+                [class.border-yellow-200]="event.status === 'draft'"
+                [class.text-yellow-600]="event.status === 'draft'"
+                [class.border-red-200]="event.status === 'cancelled'"
+                [class.text-red-500]="event.status === 'cancelled'"
+                [class.border-gray-200]="event.status === 'completed'"
+                [class.text-gray-500]="event.status === 'completed'"
+              >{{ event.status }}</span>
+            </div>
+  
+            <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ event.description }}</p>
+  
+            <div class="flex flex-wrap gap-4 text-xs text-gray-400">
+              <span class="flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                </svg>
+                {{ event.location }}
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                {{ event.date | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+              <span class="capitalize">{{ event.type }}</span>
+              <span *ngIf="event.max_participants">
+                {{ event.current_participants || 0 }}/{{ event.max_participants }} participants
+              </span>
+              <span *ngIf="event.price" class="font-medium text-majex-secondary">
+                {{ event.formatted_price || (event.price | number:'1.0-0') + ' FCFA' }}
+              </span>
+            </div>
+          </div>
+  
+          <!-- Right: actions -->
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button (click)="openEdit.emit(event)"
+              class="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+              Modifier
+            </button>
+            <button *ngIf="event.status === 'draft'" (click)="publish.emit(event)"
+              class="px-3 py-1.5 text-xs font-medium text-majex-primary border border-majex-primary/30 rounded-lg hover:bg-majex-primary/5 transition">
+              Publier
+            </button>
+            <button (click)="delete.emit(event)"
+              class="px-3 py-1.5 text-xs font-medium text-red-500 border border-red-100 rounded-lg hover:bg-red-50 transition">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Modal Événement -->
+    <div *ngIf="showEventModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div class="flex justify-between items-center px-8 py-6 border-b border-gray-100">
+          <h3 class="text-xl font-bold text-majex-secondary">
+            {{ isNewEvent ? 'Nouvel événement' : 'Modifier l\'événement' }}
+          </h3>
+          <button (click)="closeModal.emit()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 text-gray-400 transition text-xl">×</button>
+        </div>
+  
+        <form (ngSubmit)="save.emit()" class="px-8 py-6 space-y-5">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Titre *</label>
+            <input type="text" [(ngModel)]="editingEvent!.title" name="title" required
+              class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-majex-primary/20 focus:border-majex-primary outline-none transition">
+          </div>
+  
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Description *</label>
+            <textarea [(ngModel)]="editingEvent!.description" name="description" required rows="4"
+              class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-majex-primary/20 focus:border-majex-primary outline-none transition resize-none"></textarea>
+          </div>
+  
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Type *</label>
+              <select [(ngModel)]="editingEvent!.type" name="type" required
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none">
+                <option value="formation">Formation</option>
+                <option value="seminaire">Séminaire</option>
+                <option value="conference">Conférence</option>
+                <option value="ceremonie">Cérémonie</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Statut *</label>
+              <select [(ngModel)]="editingEvent!.status" name="status" required
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none">
+                <option value="draft">Brouillon</option>
+                <option value="published">Publié</option>
+                <option value="cancelled">Annulé</option>
+                <option value="completed">Terminé</option>
+              </select>
+            </div>
+          </div>
+  
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Date de début *</label>
+              <input type="datetime-local" [(ngModel)]="editingEvent!.date" name="date" required
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Date de fin</label>
+              <input type="datetime-local" [(ngModel)]="editingEvent!.end_date" name="end_date"
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none">
+            </div>
+          </div>
+  
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Lieu *</label>
+            <input type="text" [(ngModel)]="editingEvent!.location" name="location" required
+              class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-majex-primary/20 focus:border-majex-primary outline-none transition">
+          </div>
+  
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Participants max</label>
+              <input type="number" [(ngModel)]="editingEvent!.max_participants" name="max_participants"
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Prix (FCFA)</label>
+              <input type="number" [(ngModel)]="editingEvent!.price" name="price"
+                class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none">
+            </div>
+          </div>
+  
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">URL Image</label>
+            <input type="url" [(ngModel)]="editingEvent!.image_url" name="image_url"
+              class="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm outline-none">
+          </div>
+  
+          <div class="flex justify-end gap-3 pt-2">
+            <button type="button" (click)="closeModal.emit()"
+              class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+              Annuler
+            </button>
+            <button type="submit"
+              class="px-5 py-2.5 text-sm font-semibold bg-majex-primary text-white rounded-lg hover:bg-majex-accent transition">
+              {{ isNewEvent ? 'Créer' : 'Enregistrer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

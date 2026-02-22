@@ -2,13 +2,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-admin-sidebar',
+  selector: 'app-sidebar',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
-export class AdminSidebarComponent {
+export class SidebarComponent {
   @Input() activeTab: string = 'dashboard';
   @Output() tabChange = new EventEmitter<string>();
 

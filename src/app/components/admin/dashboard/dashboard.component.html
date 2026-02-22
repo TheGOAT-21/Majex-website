@@ -1,0 +1,66 @@
+<div>
+    <h2 class="text-2xl font-bold text-majex-secondary mb-8">Vue d'ensemble</h2>
+  
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Événements</p>
+        <p class="text-3xl font-bold text-majex-secondary">{{ events.length }}</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Messages</p>
+        <p class="text-3xl font-bold text-majex-secondary">{{ contacts.length }}</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Traités</p>
+        <p class="text-3xl font-bold text-majex-secondary">{{ contactStats?.replied || 0 }}</p>
+      </div>
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Non lus</p>
+        <p class="text-3xl font-bold text-majex-secondary">{{ contactStats?.unread || 0 }}</p>
+      </div>
+    </div>
+  
+    <!-- Recent -->
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-bold text-majex-secondary">Derniers événements</h3>
+          <button (click)="tabChange.emit('events')" class="text-xs text-majex-primary hover:underline">Voir tout →</button>
+        </div>
+        <div *ngIf="events.length === 0" class="text-gray-400 text-sm py-4 text-center">Aucun événement</div>
+        <div *ngFor="let event of events.slice(0, 4)" class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+          <span class="text-sm text-majex-secondary font-medium truncate max-w-[200px]">{{ event.title }}</span>
+          <span class="text-xs px-2 py-0.5 rounded ml-2 flex-shrink-0"
+            [class.bg-green-50]="event.status === 'published'"
+            [class.text-green-600]="event.status === 'published'"
+            [class.bg-gray-100]="event.status === 'draft'"
+            [class.text-gray-500]="event.status === 'draft'"
+            [class.bg-red-50]="event.status === 'cancelled'"
+            [class.text-red-500]="event.status === 'cancelled'"
+          >{{ event.status }}</span>
+        </div>
+      </div>
+  
+      <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-bold text-majex-secondary">Derniers messages</h3>
+          <button (click)="tabChange.emit('contacts')" class="text-xs text-majex-primary hover:underline">Voir tout →</button>
+        </div>
+        <div *ngIf="contacts.length === 0" class="text-gray-400 text-sm py-4 text-center">Aucun message</div>
+        <div *ngFor="let contact of contacts.slice(0, 4)" class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+              [class.bg-majex-primary]="contact.status === 'unread'"
+              [class.bg-gray-300]="contact.status !== 'unread'"></span>
+            <div class="overflow-hidden">
+              <p class="text-sm text-majex-secondary font-medium truncate">{{ contact.name }}</p>
+              <p class="text-xs text-gray-400 truncate">{{ contact.subject }}</p>
+            </div>
+          </div>
+          <span class="text-xs text-gray-400 flex-shrink-0 ml-2">{{ contact.created_at | date:'dd/MM' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
