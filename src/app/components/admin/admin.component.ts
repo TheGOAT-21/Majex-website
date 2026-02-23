@@ -90,13 +90,17 @@ export class AdminComponent implements OnInit {
 
   openNewEventModal(): void {
     this.isNewEvent = true;
-    this.editingEvent = { title: '', description: '', type: 'formation', date: '', location: '', status: 'draft' };
+    this.editingEvent = {
+      title: '', description: '', type: 'formation',
+      date: '', location: '', status: 'draft', _imageFile: null
+    };
     this.showEventModal = true;
   }
 
   openEditEventModal(event: Event): void {
     this.isNewEvent = false;
-    this.editingEvent = { ...event };
+    // Copie propre + reset du fichier image
+    this.editingEvent = { ...event, _imageFile: null };
     this.showEventModal = true;
   }
 
@@ -107,16 +111,35 @@ export class AdminComponent implements OnInit {
 
   saveEvent(): void {
     if (!this.editingEvent) return;
+
     if (this.isNewEvent) {
       this.eventService.createEvent(this.editingEvent).subscribe({
-        next: () => { this.showSuccess('Événement créé'); this.loadEvents(); this.closeEventModal(); },
-        error: (err: any) => this.showError(err.error?.message || 'Erreur création')
+        next: () => {
+          this.showSuccess('Événement créé avec succès');
+          this.loadEvents();
+          this.closeEventModal();
+        },
+        error: (err: any) => {
+          const msg = err.error?.errors?.image?.[0]
+            || err.error?.message
+            || 'Erreur lors de la création';
+          this.showError(msg);
+        }
       });
     } else {
       if (!this.editingEvent.id) { this.showError('ID manquant'); return; }
       this.eventService.updateEvent(this.editingEvent.id, this.editingEvent).subscribe({
-        next: () => { this.showSuccess('Événement mis à jour'); this.loadEvents(); this.closeEventModal(); },
-        error: (err: any) => this.showError(err.error?.message || 'Erreur mise à jour')
+        next: () => {
+          this.showSuccess('Événement mis à jour avec succès');
+          this.loadEvents();
+          this.closeEventModal();
+        },
+        error: (err: any) => {
+          const msg = err.error?.errors?.image?.[0]
+            || err.error?.message
+            || 'Erreur lors de la mise à jour';
+          this.showError(msg);
+        }
       });
     }
   }
@@ -126,7 +149,7 @@ export class AdminComponent implements OnInit {
     if (!event.id) { this.showError('ID manquant'); return; }
     this.eventService.deleteEvent(event.id).subscribe({
       next: () => { this.showSuccess('Événement supprimé'); this.loadEvents(); },
-      error: () => this.showError('Erreur suppression')
+      error: () => this.showError('Erreur lors de la suppression')
     });
   }
 
@@ -134,7 +157,7 @@ export class AdminComponent implements OnInit {
     if (!event.id) { this.showError('ID manquant'); return; }
     this.eventService.publishEvent(event.id).subscribe({
       next: () => { this.showSuccess('Événement publié'); this.loadEvents(); },
-      error: () => this.showError('Erreur publication')
+      error: () => this.showError('Erreur lors de la publication')
     });
   }
 
@@ -175,8 +198,13 @@ export class AdminComponent implements OnInit {
   updateContactStatus(event: { id: number; status: string }): void {
     if (event.status === 'replied') {
       this.contactService.markAsReplied(event.id).subscribe({
-        next: () => { this.showSuccess('Statut mis à jour'); this.loadContacts(); this.loadContactStats(); this.closeContactModal(); },
-        error: () => this.showError('Erreur mise à jour')
+        next: () => {
+          this.showSuccess('Statut mis à jour');
+          this.loadContacts();
+          this.loadContactStats();
+          this.closeContactModal();
+        },
+        error: () => this.showError('Erreur lors de la mise à jour')
       });
     }
   }
@@ -184,8 +212,13 @@ export class AdminComponent implements OnInit {
   deleteContact(contactId: number): void {
     if (!confirm('Supprimer ce message ?')) return;
     this.contactService.deleteMessage(contactId).subscribe({
-      next: () => { this.showSuccess('Message supprimé'); this.loadContacts(); this.loadContactStats(); this.closeContactModal(); },
-      error: () => this.showError('Erreur suppression')
+      next: () => {
+        this.showSuccess('Message supprimé');
+        this.loadContacts();
+        this.loadContactStats();
+        this.closeContactModal();
+      },
+      error: () => this.showError('Erreur lors de la suppression')
     });
   }
 
@@ -205,6 +238,6 @@ export class AdminComponent implements OnInit {
 
   private showError(msg: string): void {
     this.errorMessage = msg;
-    setTimeout(() => this.errorMessage = '', 4000);
+    setTimeout(() => this.errorMessage = '', 5000);
   }
 }

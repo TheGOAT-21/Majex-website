@@ -1,7 +1,19 @@
-/* Limitation du nombre de lignes pour la description */
+/* Limitation du nombre de lignes */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Spinner border-3 (Tailwind ne l'inclut pas par défaut) */
+.border-3 {
+  border-width: 3px;
+}

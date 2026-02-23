@@ -11,18 +11,20 @@ import { EventService, Event } from '../../services/event.service';
 })
 export class EventsComponent implements OnInit {
   events: Event[] = [];
+  allEvents: Event[] = [];
   loading = false;
   errorMessage = '';
-  
-  // Filtres
+
   selectedType: string = 'all';
   eventTypes = [
-    { value: 'all', label: 'Tous' },
-    { value: 'formation', label: 'Formations' },
-    { value: 'seminaire', label: 'Séminaires' },
+    { value: 'all',        label: 'Tous' },
+    { value: 'formation',  label: 'Formations' },
+    { value: 'seminaire',  label: 'Séminaires' },
     { value: 'conference', label: 'Conférences' },
-    { value: 'ceremonie', label: 'Cérémonies' }
+    { value: 'ceremonie',  label: 'Cérémonies' }
   ];
+
+  imageErrors: Set<number> = new Set();
 
   constructor(private eventService: EventService) {}
 
@@ -33,43 +35,22 @@ export class EventsComponent implements OnInit {
   loadEvents(): void {
     this.loading = true;
     this.errorMessage = '';
-    
-    // Paramètres de requête
-    const params: any = {
-      status: 'published',
-      upcoming: true
-    };
-    
-    if (this.selectedType !== 'all') {
-      params.type = this.selectedType;
-    }
+    this.imageErrors.clear();
 
     this.eventService.getEvents().subscribe({
       next: (response: any) => {
-        // Gérer différentes structures de réponse
         const data = response.data?.data || response.data || response;
-        
-        // Filtrer les événements publiés et à venir
-        this.events = data.filter((event: Event) => 
-          event.status === 'published' && 
-          new Date(event.date) > new Date()
-        );
-        
-        // Filtrer par type si nécessaire
-        if (this.selectedType !== 'all') {
-          this.events = this.events.filter(e => e.type === this.selectedType);
-        }
-        
-        // Trier par date (plus proche en premier)
-        this.events.sort((a, b) => 
-          new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
-        
+
+        this.allEvents = (data as Event[])
+          .filter(e => e.status === 'published' && new Date(e.date) > new Date())
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        this.applyFilter();
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erreur chargement événements', err);
-        this.errorMessage = 'Impossible de charger les événements';
+        this.errorMessage = 'Impossible de charger les événements. Veuillez réessayer.';
         this.loading = false;
       }
     });
@@ -77,46 +58,64 @@ export class EventsComponent implements OnInit {
 
   filterByType(type: string): void {
     this.selectedType = type;
-    this.loadEvents();
+    this.applyFilter();
+  }
+
+  private applyFilter(): void {
+    this.events = this.selectedType === 'all'
+      ? [...this.allEvents]
+      : this.allEvents.filter(e => e.type === this.selectedType);
+  }
+
+  onImageError(eventId: number | undefined): void {
+    if (eventId !== undefined) this.imageErrors.add(eventId);
+  }
+
+  hasImageError(eventId: number | undefined): boolean {
+    return eventId !== undefined && this.imageErrors.has(eventId);
   }
 
   getTypeIcon(type: string): string {
     const icons: { [key: string]: string } = {
-      formation: '📚',
-      seminaire: '💼',
+      formation:  '📚',
+      seminaire:  '💼',
       conference: '🎤',
-      ceremonie: '🎓'
+      ceremonie:  '🎓'
     };
     return icons[type] || '📅';
   }
 
   getTypeLabel(type: string): string {
     const labels: { [key: string]: string } = {
-      formation: 'Formation',
-      seminaire: 'Séminaire',
+      formation:  'Formation',
+      seminaire:  'Séminaire',
       conference: 'Conférence',
-      ceremonie: 'Cérémonie'
+      ceremonie:  'Cérémonie'
     };
     return labels[type] || type;
   }
 
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    return date.toLocaleDateString('fr-FR', options);
+    return new Date(dateString).toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      year:    'numeric',
+      month:   'long',
+      day:     'numeric',
+      hour:    '2-digit',
+      minute:  '2-digit'
+    });
   }
 
   getDaysUntil(dateString: string): number {
-    const eventDate = new Date(dateString);
-    const today = new Date();
-    const diffTime = eventDate.getTime() - today.getTime();
+    const diffTime = new Date(dateString).getTime() - new Date().getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  isUrgent(dateString: string): boolean {
+    return this.getDaysUntil(dateString) <= 7;
+  }
+
+  isFree(event: Event): boolean {
+    return !event.price || event.price === 0;
   }
 }

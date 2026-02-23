@@ -1,149 +1,201 @@
 <section id="events" class="py-20 bg-white">
-    <div class="container mx-auto px-6">
-      <!-- Header -->
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-majex-secondary mb-4">ÉVÉNEMENTS À VENIR</h2>
-        <div class="w-24 h-1 bg-majex-primary mx-auto mb-6 rounded-full"></div>
-        <p class="text-xl text-majex-gray-600 max-w-3xl mx-auto">
-          Découvrez nos prochaines formations, séminaires et conférences
-        </p>
-      </div>
-  
-      <!-- Filtres -->
-      <div class="flex flex-wrap justify-center gap-3 mb-12">
-        <button 
-          *ngFor="let type of eventTypes"
-          (click)="filterByType(type.value)"
-          [class.bg-majex-primary]="selectedType === type.value"
-          [class.text-white]="selectedType === type.value"
-          [class.bg-majex-gray-100]="selectedType !== type.value"
-          [class.text-majex-secondary]="selectedType !== type.value"
-          class="px-6 py-3 rounded-lg font-semibold transition hover:shadow-md"
-        >
-          {{ type.label }}
-        </button>
-      </div>
-  
-      <!-- Loading -->
-      <div *ngIf="loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-majex-primary"></div>
-        <p class="text-majex-gray-600 mt-4">Chargement des événements...</p>
-      </div>
-  
-      <!-- Error -->
-      <div *ngIf="errorMessage" class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-8">
-        {{ errorMessage }}
-      </div>
-  
-      <!-- No Events -->
-      <div *ngIf="!loading && events.length === 0 && !errorMessage" class="majex-card text-center py-12">
-        <div class="text-6xl mb-4">📅</div>
-        <h3 class="text-2xl font-bold text-majex-secondary mb-2">Aucun événement à venir</h3>
-        <p class="text-majex-gray-600">
-          {{ selectedType === 'all' ? 'Revenez bientôt pour découvrir nos prochains événements' : 'Aucun événement de ce type pour le moment' }}
-        </p>
-      </div>
-  
-      <!-- Events Grid -->
-      <div *ngIf="!loading && events.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div *ngFor="let event of events" class="majex-card hover:shadow-xl transition group">
-          <!-- Image -->
-          <div class="relative h-48 -mx-8 -mt-8 mb-6 overflow-hidden rounded-t-2xl bg-gradient-majex">
-            <img 
-              *ngIf="event.image_url" 
-              [src]="event.image_url" 
-              [alt]="event.title"
-              class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-            >
-            <div *ngIf="!event.image_url" class="w-full h-full flex items-center justify-center text-white text-6xl">
-              {{ getTypeIcon(event.type) }}
-            </div>
-            
-            <!-- Type Badge -->
-            <div class="absolute top-4 left-4">
-              <span class="bg-white text-majex-secondary px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                {{ getTypeLabel(event.type) }}
-              </span>
-            </div>
-  
-            <!-- Days Until Badge -->
-            <div class="absolute top-4 right-4">
-              <span class="bg-majex-accent text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                Dans {{ getDaysUntil(event.date) }} jour{{ getDaysUntil(event.date) > 1 ? 's' : '' }}
-              </span>
-            </div>
-          </div>
-  
-          <!-- Content -->
-          <div>
-            <h3 class="text-2xl font-bold text-majex-secondary mb-3 group-hover:text-majex-primary transition">
-              {{ event.title }}
-            </h3>
-  
-            <p class="text-majex-gray-600 mb-4 line-clamp-3">
-              {{ event.description }}
-            </p>
-  
-            <!-- Event Details -->
-            <div class="space-y-2 mb-6">
-              <!-- Date -->
-              <div class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-majex-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
-                <span class="text-sm text-majex-gray-700">{{ formatDate(event.date) }}</span>
-              </div>
-  
-              <!-- Location -->
-              <div class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-majex-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                <span class="text-sm text-majex-gray-700">{{ event.location }}</span>
-              </div>
-  
-              <!-- Participants (si applicable) -->
-              <div *ngIf="event.max_participants" class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-majex-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
-                <span class="text-sm text-majex-gray-700">
-                  {{ event.current_participants || 0 }} / {{ event.max_participants }} participants
-                </span>
-              </div>
-  
-              <!-- Prix -->
-              <div class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-majex-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span class="text-sm font-bold text-majex-secondary">
-                  {{ event.formatted_price || (event.price ? (event.price | number:'1.0-0') + ' FCFA' : 'Gratuit') }}
-                </span>
-              </div>
-            </div>
-  
-            <!-- CTA Button -->
-            <a 
-              href="#contact" 
-              class="btn-majex-primary w-full text-center hover-majex-primary inline-block"
-            >
-              S'inscrire maintenant
-            </a>
-          </div>
-        </div>
-      </div>
-  
-      <!-- CTA Section -->
-      <div *ngIf="!loading && events.length > 0" class="text-center mt-16">
-        <div class="majex-card bg-gradient-majex-soft inline-block">
-          <h3 class="text-2xl font-bold text-majex-secondary mb-4">Vous ne trouvez pas ce que vous cherchez ?</h3>
-          <p class="text-majex-gray-600 mb-6">Contactez-nous pour organiser une formation sur mesure</p>
-          <a href="#contact" class="btn-majex-primary hover-majex-primary">
-            Demander un devis personnalisé
-          </a>
-        </div>
+  <div class="container mx-auto px-6">
+
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-majex-secondary mb-4">ÉVÉNEMENTS À VENIR</h2>
+      <div class="w-24 h-1 bg-majex-primary mx-auto mb-6 rounded-full"></div>
+      <p class="text-xl text-majex-gray-600 max-w-3xl mx-auto">
+        Découvrez nos prochaines formations, séminaires et conférences
+      </p>
+    </div>
+
+    <!-- Filtres -->
+    <div class="flex flex-wrap justify-center gap-3 mb-12">
+      <button
+        *ngFor="let type of eventTypes"
+        (click)="filterByType(type.value)"
+        class="px-6 py-3 rounded-full font-semibold transition-all duration-200 hover:shadow-md"
+        [class.bg-majex-primary]="selectedType === type.value"
+        [class.text-white]="selectedType === type.value"
+        [class.shadow-md]="selectedType === type.value"
+        [class.bg-gray-100]="selectedType !== type.value"
+        [class.text-majex-secondary]="selectedType !== type.value"
+      >
+        {{ type.label }}
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center py-20">
+      <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-majex-primary"></div>
+      <p class="text-majex-gray-600 mt-4">Chargement des événements...</p>
+    </div>
+
+    <!-- Erreur -->
+    <div *ngIf="errorMessage && !loading"
+      class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-8 flex items-center gap-3">
+      <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd"
+          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+          clip-rule="evenodd"/>
+      </svg>
+      <div>
+        <p>{{ errorMessage }}</p>
+        <button (click)="loadEvents()" class="text-sm underline mt-1 hover:no-underline">Réessayer</button>
       </div>
     </div>
-  </section>
+
+    <!-- Vide -->
+    <div *ngIf="!loading && !errorMessage && events.length === 0"
+      class="majex-card text-center py-12">
+      <div class="text-6xl mb-4">📅</div>
+      <h3 class="text-2xl font-bold text-majex-secondary mb-2">Aucun événement à venir</h3>
+      <p class="text-majex-gray-600 mb-5">
+        {{ selectedType === 'all'
+          ? 'Revenez bientôt pour découvrir nos prochains événements'
+          : 'Aucun événement de ce type pour le moment' }}
+      </p>
+      <button *ngIf="selectedType !== 'all'"
+        (click)="filterByType('all')"
+        class="px-6 py-2.5 rounded-full border border-majex-primary text-majex-primary text-sm font-semibold hover:bg-majex-primary hover:text-white transition">
+        Voir tous les événements
+      </button>
+    </div>
+
+    <!-- Grille -->
+    <div *ngIf="!loading && events.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <div *ngFor="let event of events"
+        class="majex-card hover:shadow-xl transition-all duration-300 group flex flex-col">
+
+        <!-- Image -->
+        <div class="relative h-48 -mx-8 -mt-8 mb-6 overflow-hidden rounded-t-2xl flex-shrink-0">
+
+          <!-- Image depuis la base de données -->
+          <img
+            *ngIf="event.image_url && !hasImageError(event.id)"
+            [src]="event.image_url"
+            [alt]="event.title"
+            (error)="onImageError(event.id)"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+
+          <!-- Fallback si pas d'image ou image cassée -->
+          <div
+            *ngIf="!event.image_url || hasImageError(event.id)"
+            class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-majex-primary to-majex-secondary">
+            <span class="text-6xl mb-2">{{ getTypeIcon(event.type) }}</span>
+            <span class="text-white/70 text-xs font-semibold uppercase tracking-widest">
+              {{ getTypeLabel(event.type) }}
+            </span>
+          </div>
+
+          <!-- Badge type -->
+          <div class="absolute bottom-4 left-4">
+            <span class="bg-white/95 text-majex-secondary px-3 py-1 rounded-full text-xs font-bold shadow">
+              {{ getTypeLabel(event.type) }}
+            </span>
+          </div>
+
+          <!-- Badge compte à rebours -->
+          <div class="absolute top-4 right-4">
+            <span class="px-3 py-1.5 rounded-full text-xs font-bold text-white shadow"
+              [class.bg-red-500]="isUrgent(event.date)"
+              [class.bg-majex-accent]="!isUrgent(event.date)">
+              {{ getDaysUntil(event.date) === 1 ? 'Demain !' : 'Dans ' + getDaysUntil(event.date) + ' jours' }}
+            </span>
+          </div>
+
+          <!-- Badge gratuit -->
+          <div *ngIf="isFree(event)" class="absolute top-4 left-4">
+            <span class="bg-majex-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow">
+              Gratuit
+            </span>
+          </div>
+        </div>
+
+        <!-- Contenu -->
+        <div class="flex flex-col flex-1">
+
+          <h3 class="text-xl font-bold text-majex-secondary mb-2 group-hover:text-majex-primary transition line-clamp-2">
+            {{ event.title }}
+          </h3>
+
+          <p class="text-majex-gray-600 text-sm mb-5 line-clamp-3 flex-1">
+            {{ event.description }}
+          </p>
+
+          <!-- Infos -->
+          <div class="space-y-2.5 mb-5">
+
+            <!-- Date -->
+            <div class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-majex-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-sm text-majex-gray-700 capitalize">{{ formatDate(event.date) }}</span>
+            </div>
+
+            <!-- Lieu -->
+            <div class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-majex-primary mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span class="text-sm text-majex-gray-700">{{ event.location }}</span>
+            </div>
+
+            <!-- Participants (nombre uniquement, sans jauge) -->
+            <div *ngIf="event.max_participants" class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-majex-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span class="text-sm text-majex-gray-700">
+                {{ event.current_participants || 0 }} / {{ event.max_participants }} participants
+              </span>
+            </div>
+
+            <!-- Prix -->
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-majex-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-sm font-bold text-majex-secondary">
+                {{ isFree(event) ? 'Gratuit' : (event.formatted_price || (event.price | number:'1.0-0') + ' FCFA') }}
+              </span>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <a href="#contact"
+            class="btn-majex-primary w-full text-center hover-majex-primary inline-block mt-auto">
+            S'inscrire maintenant
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CTA bas -->
+    <div *ngIf="!loading && allEvents.length > 0" class="text-center mt-16">
+      <div class="majex-card bg-gradient-majex-soft inline-block max-w-xl w-full">
+        <h3 class="text-2xl font-bold text-majex-secondary mb-3">
+          Vous ne trouvez pas ce que vous cherchez ?
+        </h3>
+        <p class="text-majex-gray-600 mb-6">
+          Contactez-nous pour organiser une formation sur mesure
+        </p>
+        <a href="#contact" class="btn-majex-primary hover-majex-primary">
+          Demander un devis personnalisé
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
