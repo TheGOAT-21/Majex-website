@@ -10,6 +10,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { EventsComponent } from './events/events.component';
 import { ContactsComponent } from './contacts/contacts.component';
+import { MediaComponent } from './media/media.component';
 import { StatsComponent } from './stats/stats.component';
 import { SettingsComponent } from './settings/settings.component';
 
@@ -24,6 +25,7 @@ import { SettingsComponent } from './settings/settings.component';
     DashboardComponent,
     EventsComponent,
     ContactsComponent,
+    MediaComponent,
     StatsComponent,
     SettingsComponent
   ],
@@ -31,7 +33,7 @@ import { SettingsComponent } from './settings/settings.component';
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
-  activeTab: 'dashboard' | 'events' | 'contacts' | 'stats' | 'settings' = 'dashboard';
+  activeTab: 'dashboard' | 'events' | 'contacts' | 'media' | 'stats' | 'settings' = 'dashboard';
   currentUser: any = null;
 
   // Events
@@ -70,7 +72,7 @@ export class AdminComponent implements OnInit {
   }
 
   onTabChange(tab: string): void {
-    this.activeTab = tab as 'dashboard' | 'events' | 'contacts' | 'stats' | 'settings';
+    this.activeTab = tab as 'dashboard' | 'events' | 'contacts' | 'media' | 'stats' | 'settings';
   }
 
   // ========== EVENTS ==========
@@ -99,7 +101,6 @@ export class AdminComponent implements OnInit {
 
   openEditEventModal(event: Event): void {
     this.isNewEvent = false;
-    // Copie propre + reset du fichier image
     this.editingEvent = { ...event, _imageFile: null };
     this.showEventModal = true;
   }
@@ -120,9 +121,7 @@ export class AdminComponent implements OnInit {
           this.closeEventModal();
         },
         error: (err: any) => {
-          const msg = err.error?.errors?.image?.[0]
-            || err.error?.message
-            || 'Erreur lors de la création';
+          const msg = err.error?.errors?.image?.[0] || err.error?.message || 'Erreur lors de la création';
           this.showError(msg);
         }
       });
@@ -135,9 +134,7 @@ export class AdminComponent implements OnInit {
           this.closeEventModal();
         },
         error: (err: any) => {
-          const msg = err.error?.errors?.image?.[0]
-            || err.error?.message
-            || 'Erreur lors de la mise à jour';
+          const msg = err.error?.errors?.image?.[0] || err.error?.message || 'Erreur lors de la mise à jour';
           this.showError(msg);
         }
       });

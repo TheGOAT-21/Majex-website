@@ -16,10 +16,11 @@ export class NavbarComponent {
   getPageTitle(): string {
     const titles: { [key: string]: string } = {
       'dashboard': 'Dashboard',
-      'events': 'Événements',
-      'contacts': 'Messages',
-      'stats': 'Statistiques',
-      'settings': 'Paramètres'
+      'events':    'Événements',
+      'contacts':  'Messages',
+      'media':     'Médiathèque',
+      'stats':     'Statistiques',
+      'settings':  'Paramètres'
     };
     return titles[this.activeTab] || 'Dashboard';
   }

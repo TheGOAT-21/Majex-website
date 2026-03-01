@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AssetService, SiteAsset } from '../../../services/asset.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-media',
@@ -64,6 +65,14 @@ export class MediaComponent implements OnInit {
     });
   }
 
+  // ── Résolution URL (relative → absolue) ───────────────────────
+
+  resolveUrl(url: string | null): string {
+    if (!url) return '';
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
+    return `${environment.apiUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+  }
+
   // ── Filtrage ────────────────────────────────────────────────────
 
   get filteredAssets(): SiteAsset[] {
@@ -102,7 +111,7 @@ export class MediaComponent implements OnInit {
       sort_order: asset.sort_order,
       is_active:  asset.is_active,
     });
-    this.assetForm.get('key')?.disable(); // La clé n'est pas modifiable
+    this.assetForm.get('key')?.disable();
     this.selectedFile = null;
     this.previewUrl = null;
     this.errorMessage = '';
@@ -131,8 +140,10 @@ export class MediaComponent implements OnInit {
     }
   }
 
+  /** Masque l'image cassée sans boucle infinie */
   onImgError(event: Event): void {
-    (event.target as HTMLImageElement).src = 'assets/images/placeholder.png';
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
   }
 
   private setFile(file: File): void {
@@ -152,7 +163,7 @@ export class MediaComponent implements OnInit {
     this.errorMessage = '';
 
     const formData = new FormData();
-    const values = this.assetForm.getRawValue(); // Inclut les champs disabled (ex: key)
+    const values = this.assetForm.getRawValue();
 
     Object.entries(values).forEach(([k, v]) => {
       if (v !== null && v !== undefined) {

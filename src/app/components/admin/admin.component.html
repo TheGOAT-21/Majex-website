@@ -66,6 +66,11 @@
         (deleteContact)="deleteContact($event)">
       </app-contacts>
 
+      <!-- Médias (nouveau) -->
+      <app-media
+        *ngIf="activeTab === 'media'">
+      </app-media>
+
       <!-- Stats -->
       <app-stats
         *ngIf="activeTab === 'stats'"
