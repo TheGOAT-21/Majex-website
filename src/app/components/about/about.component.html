@@ -15,12 +15,12 @@
         <div class="relative">
           <div class="grid grid-cols-2 gap-4">
             <div class="rounded-xl overflow-hidden shadow-lg">
-              <img src="assets/images/pic7.jpg"
+              <img [src]="officeImageUrl"
                    alt="Bureau professionnel"
                    class="w-full h-full object-cover">
             </div>
             <div class="rounded-xl overflow-hidden shadow-lg mt-8">
-              <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+              <img [src]="teamImageUrl"
                    alt="Équipe collaborative"
                    class="w-full h-64 object-cover">
             </div>
@@ -96,9 +96,9 @@
     <div class="majex-card bg-majex-gray-50">
       <h3 class="text-2xl font-bold text-majex-secondary mb-8 text-center">Certifications & Agréments</h3>
 
-      <!-- Logo du Ministère (en haut, centré) -->
+      <!-- Logo du Ministère -->
       <div class="flex items-center justify-center flex-col mb-12">
-        <img src="assets/logos/Logo-METFPA-2.png"
+        <img [src]="metfpaLogoUrl"
              alt="Logo METFPA"
              class="h-32 w-auto object-contain mb-4">
         <div class="text-center">
@@ -107,10 +107,10 @@
         </div>
       </div>
 
-      <!-- Agréments sous tutelle (en dessous) -->
+      <!-- Agréments -->
       <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
         <div class="flex items-center justify-center flex-col text-center bg-white p-6 rounded-xl shadow-md border-t-4 border-majex-primary">
-          <img src="assets/logos/fdfp.png"
+          <img [src]="fdfpLogoUrl"
                alt="Logo FDFP"
                class="h-20 w-auto object-contain mb-4">
           <div>

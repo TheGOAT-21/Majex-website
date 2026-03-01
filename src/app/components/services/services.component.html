@@ -55,7 +55,7 @@
         <div class="lg:col-span-7">
           <div class="relative">
             <div class="absolute -top-8 -left-8 w-full h-full bg-majex-primary/5 rounded-2xl"></div>
-            <img src="assets/images/pic5.jpg"
+            <img [src]="formationImageUrl"
                  alt="Formation professionnelle"
                  class="relative rounded-2xl shadow-2xl w-full h-[500px] object-cover">
             <div class="absolute -bottom-8 -right-8 bg-white p-8 rounded-xl shadow-2xl max-w-xs">
@@ -73,7 +73,7 @@
         <!-- Image d'abord - 6 colonnes -->
         <div class="lg:col-span-6 lg:order-1 order-2">
           <div class="relative h-[600px]">
-            <img src="assets/images/pic8.jpg"
+            <img [src]="conseilImageUrl"
                  alt="Conseil stratégique"
                  class="absolute inset-0 w-full h-full object-cover rounded-2xl shadow-2xl">
             <div class="absolute inset-0 bg-gradient-to-t from-majex-secondary/60 to-transparent rounded-2xl"></div>
@@ -257,7 +257,7 @@
           <!-- Image sidebar - 1 colonne -->
           <div class="lg:col-span-1">
             <div class="sticky top-8">
-              <img src="assets/images/pic6.jpg"
+              <img [src]="recrutementImageUrl"
                    alt="Recrutement"
                    class="w-full h-[600px] object-cover rounded-2xl shadow-xl">
             </div>

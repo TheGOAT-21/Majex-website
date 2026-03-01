@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AssetService } from '../../services/asset.service';
 
 interface FormationDomain {
   name: string;
@@ -37,8 +38,13 @@ interface Space {
   styleUrl: './services.component.css'
 })
 export class ServicesComponent {
+  private assetService = inject(AssetService);
+
+  get formationImageUrl()    { return this.assetService.getUrl('service-formation'); }
+  get conseilImageUrl()      { return this.assetService.getUrl('service-conseil'); }
+  get recrutementImageUrl()  { return this.assetService.getUrl('service-recrutement'); }
+
   // Formation data
-  // Formation types
   formationTypes = {
     inter: {
       title: 'Formation Inter-Entreprise',
@@ -104,7 +110,6 @@ export class ServicesComponent {
     }
   ];
 
-  // Conseil data
   caseStudies: CaseStudy[] = [
     {
       title: 'Transformation Organisationnelle',
@@ -122,7 +127,6 @@ export class ServicesComponent {
     }
   ];
 
-  // IT Services
   itServices = {
     development: [
       'Applications Web & Mobile sur mesure',
@@ -142,69 +146,24 @@ export class ServicesComponent {
     ]
   };
 
-  // Spaces for rent
   spaces: Space[] = [
-    {
-      name: 'Salle de Formation 1',
-      capacity: '20-30 personnes',
-      equipment: ['Projecteur HD', 'Tableau blanc', 'Climatisation', 'WiFi haut débit', 'Tables modulables'],
-      price: 'Sur devis',
-      image: '/assets/images/salle-formation-1.jpg'
-    },
-    {
-      name: 'Salle de Formation 2',
-      capacity: '15-20 personnes',
-      equipment: ['Écran interactif', 'Ordinateurs', 'Climatisation', 'WiFi', 'Espace pause'],
-      price: 'Sur devis',
-      image: '/assets/images/salle-formation-2.jpg'
-    },
-    {
-      name: 'Salle de Conférence',
-      capacity: '50-100 personnes',
-      equipment: ['Système audio professionnel', 'Vidéoprojecteur', 'Podium', 'Micros sans fil', 'Caméra'],
-      price: 'Sur devis',
-      image: '/assets/images/salle-conference.jpg'
-    },
-    {
-      name: 'Salle de Réunion Executive',
-      capacity: '8-12 personnes',
-      equipment: ['Écran TV 65"', 'Visioconférence', 'Table de réunion', 'Climatisation', 'Machine à café'],
-      price: 'Sur devis',
-      image: '/assets/images/salle-reunion.jpg'
-    }
+    { name: 'Salle de Formation 1', capacity: '20-30 personnes', equipment: ['Projecteur HD', 'Tableau blanc', 'Climatisation', 'WiFi haut débit', 'Tables modulables'], price: 'Sur devis', image: '/assets/images/salle-formation-1.jpg' },
+    { name: 'Salle de Formation 2', capacity: '15-20 personnes', equipment: ['Écran interactif', 'Ordinateurs', 'Climatisation', 'WiFi', 'Espace pause'], price: 'Sur devis', image: '/assets/images/salle-formation-2.jpg' },
+    { name: 'Salle de Conférence', capacity: '50-100 personnes', equipment: ['Système audio professionnel', 'Vidéoprojecteur', 'Podium', 'Micros sans fil', 'Caméra'], price: 'Sur devis', image: '/assets/images/salle-conference.jpg' },
+    { name: 'Salle de Réunion Executive', capacity: '8-12 personnes', equipment: ['Écran TV 65"', 'Visioconférence', 'Table de réunion', 'Climatisation', 'Machine à café'], price: 'Sur devis', image: '/assets/images/salle-reunion.jpg' }
   ];
 
-  // Active sections
   activeFormationTab = 'domains';
   activeConseilTab = 'organisation';
   activeITTab = 'development';
   showSpaceModal = false;
   selectedSpace: Space | null = null;
 
-  // Methods
-  setFormationTab(tab: string) {
-    this.activeFormationTab = tab;
-  }
+  setFormationTab(tab: string) { this.activeFormationTab = tab; }
+  setConseilTab(tab: string)   { this.activeConseilTab = tab; }
+  setITTab(tab: string)        { this.activeITTab = tab; }
 
-  setConseilTab(tab: string) {
-    this.activeConseilTab = tab;
-  }
-
-  setITTab(tab: string) {
-    this.activeITTab = tab;
-  }
-
-  openSpaceModal(space: Space) {
-    this.selectedSpace = space;
-    this.showSpaceModal = true;
-  }
-
-  closeSpaceModal() {
-    this.showSpaceModal = false;
-    this.selectedSpace = null;
-  }
-
-  getStars(rating: number): number[] {
-    return Array(rating).fill(0);
-  }
+  openSpaceModal(space: Space)  { this.selectedSpace = space; this.showSpaceModal = true; }
+  closeSpaceModal()              { this.showSpaceModal = false; this.selectedSpace = null; }
+  getStars(rating: number): number[] { return Array(rating).fill(0); }
 }

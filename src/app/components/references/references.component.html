@@ -11,13 +11,23 @@
     <!-- Logos Partenaires -->
     <div class="mb-16">
       <div class="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-        <img src="assets/partenaire_logos/RTI.webp" alt="RTI" class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
-        <img src="assets/partenaire_logos/ANAC.png" alt="ANAC" class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
-        <img src="assets/partenaire_logos/Port Autonome Abidjan.png" alt="Port Autonome d'Abidjan" class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
-        <img src="assets/partenaire_logos/OSCN.png" alt="OSCN" class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
-        <img src="assets/partenaire_logos/ADERIZ.png" alt="ADERIZ" class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
-        <img src="assets/partenaire_logos/codival.svg" alt="CODIVAL" class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
-        <img src="assets/partenaire_logos/Kaera.svg" alt="Kaera" class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
+
+        <!-- Dynamique (backend chargé) -->
+        <ng-container *ngIf="partners.length > 0">
+          <img *ngFor="let partner of partners"
+               [src]="partner.url || ''"
+               [alt]="partner.alt_text || partner.label"
+               class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
+        </ng-container>
+
+        <!-- Fallback statique (backend pas encore configuré) -->
+        <ng-container *ngIf="partners.length === 0">
+          <img *ngFor="let p of staticPartners"
+               [src]="p.src"
+               [alt]="p.alt"
+               class="h-16 md:h-20 object-contain grayscale hover:grayscale-0 transition-all duration-300">
+        </ng-container>
+
       </div>
     </div>
 
@@ -27,7 +37,7 @@
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div class="bg-white p-6 rounded-xl majex-card border-l-4 border-majex-primary">
           <div class="flex justify-center mb-4">
-            <img src="assets/logos/fdfp.png" alt="FDFP" class="h-16 object-contain">
+            <img [src]="fdfpLogoUrl" alt="FDFP" class="h-16 object-contain">
           </div>
           <h4 class="font-bold text-majex-secondary mb-2">Étude FDFP</h4>
           <p class="text-majex-gray-600 mb-3">Analyse du marché de l'offre privée de formation professionnelle continue en Côte d'Ivoire</p>
@@ -37,7 +47,7 @@
         </div>
         <div class="bg-white p-6 rounded-xl majex-card border-l-4 border-majex-accent">
           <div class="flex justify-center mb-4">
-            <img src="assets/partenaire_logos/codival.svg" alt="CODIVAL" class="h-16 object-contain">
+            <img [src]="codivalLogoUrl" alt="CODIVAL" class="h-16 object-contain">
           </div>
           <h4 class="font-bold text-majex-secondary mb-2">Projet Apprentissage</h4>
           <p class="text-majex-gray-600 mb-3">Formation CODIVAL</p>
@@ -47,7 +57,7 @@
         </div>
         <div class="bg-white p-6 rounded-xl majex-card border-l-4 border-majex-primary">
           <div class="flex justify-center mb-4">
-            <img src="assets/partenaire_logos/OSCN.png" alt="OSCN" class="h-16 object-contain">
+            <img [src]="oscnLogoUrl" alt="OSCN" class="h-16 object-contain">
           </div>
           <h4 class="font-bold text-majex-secondary mb-2">Étude SCAED</h4>
           <p class="text-majex-gray-600 mb-3">Étude stratégique d'intervention (OSCN)</p>

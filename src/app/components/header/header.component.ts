@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AssetService } from '../../services/asset.service';
 
 @Component({
   selector: 'app-header',
@@ -7,13 +8,13 @@ import { Component } from '@angular/core';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
+  private assetService = inject(AssetService);
+
   isMenuOpen = false;
 
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
+  get logoUrl() { return this.assetService.getUrl('logo-main'); }
+  get logoAlt() { return this.assetService.getAsset('logo-main')?.alt_text ?? 'MAJEX CONSULTING'; }
 
-  closeMenu() {
-    this.isMenuOpen = false;
-  }
+  toggleMenu() { this.isMenuOpen = !this.isMenuOpen; }
+  closeMenu()  { this.isMenuOpen = false; }
 }

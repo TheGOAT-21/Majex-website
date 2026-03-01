@@ -34,29 +34,43 @@ export class AssetService {
   /** Cache en mémoire : évite de re-fetcher à chaque navigation */
   private assetsCache = new BehaviorSubject<AssetsGrouped | null>(null);
 
-  /** Fallbacks locaux si le backend n'est pas encore configuré */
+  /**
+   * Fallbacks vers les fichiers statiques Angular existants.
+   * Utilisés tant que l'image n'a pas été uploadée côté backend.
+   */
   private fallbacks: Record<string, string> = {
-    'logo-main':          'assets/images/logo.png',
-    'hero-main':          'assets/images/hero-bg.jpg',
-    'about-office':       'assets/images/about-office.jpg',
-    'about-team':         'assets/images/about-team.jpg',
-    'service-formation':  'assets/images/service-formation.jpg',
-    'service-conseil':    'assets/images/service-conseil.jpg',
-    'service-recrutement':'assets/images/service-recrutement.jpg',
-    'partner-rti':        'assets/images/partners/rti.png',
-    'partner-anac':       'assets/images/partners/anac.png',
-    'partner-port-abidjan':'assets/images/partners/port-abidjan.png',
-    'partner-oscn':       'assets/images/partners/oscn.png',
-    'partner-aderiz':     'assets/images/partners/aderiz.png',
-    'partner-codival':    'assets/images/partners/codival.png',
-    'partner-kaera':      'assets/images/partners/kaera.png',
+    // Logos
+    'logo-main':           'assets/logos/0-removebg-preview 1.png',
+    'logo-fdfp':           'assets/logos/fdfp.png',
+    'logo-metfpa':         'assets/logos/Logo-METFPA-2.png',
+
+    // Héro
+    'hero-main':           'assets/images/pic4.jpg',
+
+    // About
+    'about-office':        'assets/images/pic7.jpg',
+    'about-team':          'https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+
+    // Services
+    'service-formation':   'assets/images/pic5.jpg',
+    'service-conseil':     'assets/images/pic8.jpg',
+    'service-recrutement': 'assets/images/pic6.jpg',
+
+    // Partenaires
+    'partner-rti':          'assets/partenaire_logos/RTI.webp',
+    'partner-anac':         'assets/partenaire_logos/ANAC.png',
+    'partner-port-abidjan': 'assets/partenaire_logos/Port Autonome Abidjan.png',
+    'partner-oscn':         'assets/partenaire_logos/OSCN.png',
+    'partner-aderiz':       'assets/partenaire_logos/ADERIZ.png',
+    'partner-codival':      'assets/partenaire_logos/codival.svg',
+    'partner-kaera':        'assets/partenaire_logos/Kaera.svg',
   };
 
   // ── Chargement initial ────────────────────────────────────────
 
   /**
    * Charge tous les assets depuis le backend.
-   * À appeler dans AppComponent.ngOnInit() ou APP_INITIALIZER.
+   * À appeler via provideAppInitializer() dans app.config.ts.
    * Utilise le cache si déjà chargé.
    */
   loadAll(): Observable<AssetsGrouped> {
@@ -84,15 +98,11 @@ export class AssetService {
 
   /**
    * Retourne l'URL d'un asset par sa clé.
-   * Utilise le cache s'il est disponible, sinon le fallback local.
-   *
-   * Utilisation dans un composant :
-   *   logoUrl = this.assetService.getUrl('logo-main');
+   * Priorité : backend (cache) → url Unsplash stockée → fallback local.
    */
   getUrl(key: string): string {
     const cache = this.assetsCache.value;
     if (cache) {
-      // Chercher dans toutes les catégories
       for (const category of Object.values(cache)) {
         if (Array.isArray(category)) {
           const asset = category.find((a: SiteAsset) => a.key === key);
@@ -100,7 +110,6 @@ export class AssetService {
         }
       }
     }
-    // Fallback local
     return this.fallbacks[key] ?? 'assets/images/placeholder.png';
   }
 
@@ -110,7 +119,6 @@ export class AssetService {
   getAsset(key: string): SiteAsset | null {
     const cache = this.assetsCache.value;
     if (!cache) return null;
-
     for (const category of Object.values(cache)) {
       if (Array.isArray(category)) {
         const asset = category.find((a: SiteAsset) => a.key === key);
@@ -121,7 +129,8 @@ export class AssetService {
   }
 
   /**
-   * Retourne tous les assets d'une catégorie (utile pour les partenaires).
+   * Retourne tous les assets actifs d'une catégorie, triés par sort_order.
+   * Utilisé pour les partenaires (liste dynamique).
    */
   getByCategory(category: string): SiteAsset[] {
     const cache = this.assetsCache.value;
@@ -150,7 +159,7 @@ export class AssetService {
 
   /** Modifier un asset (avec ou sans nouvelle image) */
   adminUpdate(id: number, formData: FormData): Observable<SiteAsset> {
-    formData.append('_method', 'PUT'); // Laravel method spoofing pour multipart
+    formData.append('_method', 'PUT');
     return this.http.post<{ success: boolean; data: SiteAsset }>(
       `${environment.apiUrl}/admin/assets/${id}`, formData
     ).pipe(
