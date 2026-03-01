@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { AssetService } from '../../services/asset.service';
+
 
 @Component({
   selector: 'app-hero',

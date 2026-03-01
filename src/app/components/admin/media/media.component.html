@@ -1,0 +1,246 @@
+<div class="p-6">
+
+    <!-- En-tête -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Médiathèque</h2>
+        <p class="text-gray-500 text-sm mt-1">Gérez les images affichées sur le site public</p>
+      </div>
+      <button (click)="openCreateModal()"
+        class="flex items-center gap-2 bg-[#17894C] hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+        <span class="text-lg font-bold">+</span>
+        <span>Ajouter une image</span>
+      </button>
+    </div>
+  
+    <!-- Filtre par catégorie -->
+    <div class="flex gap-2 mb-6 flex-wrap">
+      <button *ngFor="let cat of categories"
+        (click)="activeCategory = cat.value"
+        [class]="activeCategory === cat.value
+          ? 'bg-[#17894C] text-white px-4 py-2 rounded-full text-sm font-medium'
+          : 'bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm'">
+        {{ cat.label }}
+        <span class="ml-1 opacity-70">({{ countByCategory(cat.value) }})</span>
+      </button>
+    </div>
+  
+    <!-- Grille d'assets -->
+    <div *ngIf="!loading; else loadingTpl">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div *ngFor="let asset of filteredAssets"
+          class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+  
+          <!-- Aperçu image -->
+          <div class="relative bg-gray-50 h-32 flex items-center justify-center overflow-hidden">
+            <img *ngIf="asset.url"
+              [src]="asset.url"
+              [alt]="asset.alt_text || asset.label"
+              class="max-h-full max-w-full object-contain p-2"
+              (error)="onImgError($event)" />
+  
+            <div *ngIf="!asset.url" class="flex flex-col items-center text-gray-300">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-xs mt-1">Aucune image</span>
+            </div>
+  
+            <!-- Badge inactif -->
+            <span *ngIf="!asset.is_active"
+              class="absolute top-1 right-1 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded">
+              Inactif
+            </span>
+          </div>
+  
+          <!-- Infos -->
+          <div class="p-3">
+            <p class="text-xs font-semibold text-gray-800 truncate" [title]="asset.label">
+              {{ asset.label }}
+            </p>
+            <p class="text-xs text-gray-400 font-mono mt-0.5 truncate" [title]="asset.key">
+              {{ asset.key }}
+            </p>
+            <span class="inline-block mt-1 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+              {{ getCategoryLabel(asset.category) }}
+            </span>
+          </div>
+  
+          <!-- Actions -->
+          <div class="border-t border-gray-100 flex">
+            <button (click)="openEditModal(asset)"
+              class="flex-1 py-2 text-xs text-[#17894C] hover:bg-green-50 transition-colors font-medium">
+              Modifier
+            </button>
+            <div class="w-px bg-gray-100"></div>
+            <button (click)="toggleAsset(asset)"
+              class="flex-1 py-2 text-xs hover:bg-gray-50 transition-colors"
+              [class]="asset.is_active ? 'text-yellow-600' : 'text-green-600'">
+              {{ asset.is_active ? 'Désactiver' : 'Activer' }}
+            </button>
+            <div class="w-px bg-gray-100"></div>
+            <button (click)="deleteAsset(asset)"
+              class="flex-1 py-2 text-xs text-red-500 hover:bg-red-50 transition-colors">
+              Suppr.
+            </button>
+          </div>
+  
+        </div>
+      </div>
+  
+      <!-- État vide -->
+      <div *ngIf="filteredAssets.length === 0" class="text-center py-16 text-gray-400">
+        <svg class="w-16 h-16 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <p class="text-lg font-medium">Aucune image dans cette catégorie</p>
+        <p class="text-sm mt-1">Cliquez sur "Ajouter une image" pour commencer</p>
+      </div>
+    </div>
+  
+    <!-- Loading skeleton -->
+    <ng-template #loadingTpl>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div *ngFor="let i of [1,2,3,4,5,6,7,8]"
+          class="bg-gray-100 rounded-xl h-48 animate-pulse">
+        </div>
+      </div>
+    </ng-template>
+  
+  </div>
+  
+  <!-- ═══════════════════════════════════════════════════════════════
+       MODAL CRÉATION / MODIFICATION
+  ════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="showModal"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+  
+      <!-- Header modal -->
+      <div class="flex items-center justify-between p-5 border-b border-gray-100">
+        <h3 class="text-lg font-bold text-gray-800">
+          {{ editingAsset ? "Modifier l'image" : 'Ajouter une image' }}
+        </h3>
+        <button (click)="closeModal()"
+          class="text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 flex items-center justify-center">
+          ×
+        </button>
+      </div>
+  
+      <form [formGroup]="assetForm" (ngSubmit)="submitForm()" class="p-5 space-y-4">
+  
+        <!-- Clé (création uniquement) -->
+        <div *ngIf="!editingAsset">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Clé unique <span class="text-red-500">*</span>
+          </label>
+          <input formControlName="key" type="text"
+            placeholder="ex: hero-main, partner-rti"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#17894C] focus:border-transparent outline-none" />
+          <p class="text-xs text-gray-400 mt-1">Lettres minuscules, chiffres et tirets uniquement</p>
+          <p *ngIf="assetForm.get('key')?.invalid && assetForm.get('key')?.touched"
+            class="text-xs text-red-500 mt-1">Clé invalide</p>
+        </div>
+  
+        <!-- Catégorie -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Catégorie <span class="text-red-500">*</span>
+          </label>
+          <select formControlName="category"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#17894C] outline-none">
+            <option value="">Sélectionner une catégorie</option>
+            <option *ngFor="let cat of categories.slice(1)" [value]="cat.value">{{ cat.label }}</option>
+          </select>
+        </div>
+  
+        <!-- Label -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Nom/description <span class="text-red-500">*</span>
+          </label>
+          <input formControlName="label" type="text"
+            placeholder="ex: Logo RTI"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#17894C] outline-none" />
+        </div>
+  
+        <!-- Texte alt -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Texte alternatif (SEO)</label>
+          <input formControlName="alt_text" type="text"
+            placeholder="Description de l'image pour l'accessibilité"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#17894C] outline-none" />
+        </div>
+  
+        <!-- Upload fichier -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            {{ editingAsset ? "Remplacer l'image" : 'Image' }}
+            <span *ngIf="!editingAsset" class="text-red-500">*</span>
+          </label>
+  
+          <!-- Zone drag & drop -->
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-[#17894C] transition-colors"
+            (click)="fileInput.click()"
+            (dragover)="$event.preventDefault()"
+            (drop)="onDrop($event)">
+  
+            <ng-container *ngIf="!previewUrl && !editingAsset?.url">
+              <svg class="w-8 h-8 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <p class="text-sm text-gray-500">Cliquez ou glissez une image ici</p>
+              <p class="text-xs text-gray-400 mt-1">PNG, JPG, SVG, WebP — max 5 Mo</p>
+            </ng-container>
+  
+            <div *ngIf="previewUrl || editingAsset?.url">
+              <img [src]="previewUrl || editingAsset?.url" alt="Aperçu"
+                class="max-h-32 mx-auto rounded-lg object-contain" />
+              <p class="text-xs text-[#17894C] mt-2">
+                {{ previewUrl ? selectedFileName : "Image actuelle — cliquez pour remplacer" }}
+              </p>
+            </div>
+          </div>
+  
+          <input #fileInput type="file" accept="image/*" class="hidden"
+            (change)="onFileSelected($event)" />
+        </div>
+  
+        <!-- Ordre + Actif -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ordre d'affichage</label>
+            <input formControlName="sort_order" type="number" min="0"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#17894C] outline-none" />
+          </div>
+          <div class="flex items-center gap-3 pt-6">
+            <input formControlName="is_active" type="checkbox" id="is_active"
+              class="w-4 h-4 accent-[#17894C]" />
+            <label for="is_active" class="text-sm text-gray-700">Actif sur le site</label>
+          </div>
+        </div>
+  
+        <!-- Message d'erreur global -->
+        <div *ngIf="errorMessage" class="bg-red-50 text-red-700 text-sm p-3 rounded-lg">
+          {{ errorMessage }}
+        </div>
+  
+        <!-- Boutons -->
+        <div class="flex gap-3 pt-2">
+          <button type="button" (click)="closeModal()"
+            class="flex-1 border border-gray-300 text-gray-700 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+            Annuler
+          </button>
+          <button type="submit" [disabled]="submitting || assetForm.invalid"
+            class="flex-1 bg-[#17894C] hover:bg-green-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+            <span *ngIf="submitting" class="animate-spin">⏳</span>
+            {{ editingAsset ? 'Enregistrer' : 'Ajouter' }}
+          </button>
+        </div>
+  
+      </form>
+    </div>
+  </div>
