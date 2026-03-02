@@ -1,17 +1,25 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { AssetService } from '../../services/asset.service';
 
 @Component({
   selector: 'app-about',
   imports: [],
   templateUrl: './about.component.html',
-  styleUrl: './about.component.css'
+  styleUrl: './about.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AboutComponent {
+export class AboutComponent implements OnInit {
   private assetService = inject(AssetService);
 
-  get officeImageUrl()  { return this.assetService.getUrl('about-office'); }
-  get teamImageUrl()    { return this.assetService.getUrl('about-team'); }
-  get fdfpLogoUrl()     { return this.assetService.getUrl('logo-fdfp'); }
-  get metfpaLogoUrl()   { return this.assetService.getUrl('logo-metfpa'); }
+  officeImageUrl = '';
+  teamImageUrl   = '';
+  fdfpLogoUrl    = '';
+  metfpaLogoUrl  = '';
+
+  ngOnInit(): void {
+    this.officeImageUrl = this.assetService.getUrl('about-office');
+    this.teamImageUrl   = this.assetService.getUrl('about-team');
+    this.fdfpLogoUrl    = this.assetService.getUrl('logo-fdfp');
+    this.metfpaLogoUrl  = this.assetService.getUrl('logo-metfpa');
+  }
 }

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, tap, catchError, map } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap, catchError, map, filter, take } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface SiteAsset {
@@ -30,7 +30,9 @@ export class AssetService {
   private publicUrl = `${this.baseUrl}/assets`;
   private adminUrl  = `${this.baseUrl}/admin/assets`;
 
-  private assetsCache = new BehaviorSubject<AssetsGrouped | null>(null);
+  // null = pas encore chargé, {} = chargé (même si vide/erreur)
+  private assetsCache$ = new BehaviorSubject<AssetsGrouped | null>(null);
+  private loaded = false;
 
   private fallbacks: Record<string, string> = {
     'logo-main':            'assets/logos/0-removebg-preview 1.png',
@@ -51,31 +53,42 @@ export class AssetService {
     'partner-kaera':        'assets/partenaire_logos/Kaera.svg',
   };
 
-  // ── Chargement initial ────────────────────────────────────────
+  // ── Chargement initial (à appeler UNE seule fois au démarrage) ──
 
   loadAll(): Observable<AssetsGrouped> {
-    if (this.assetsCache.value) {
-      return of(this.assetsCache.value);
+    if (this.loaded) {
+      return of(this.assetsCache$.value ?? {});
     }
-    return this.http.get<{ success: boolean; data: AssetsGrouped }>(this.publicUrl)
-      .pipe(
-        map(res => res.data),
-        tap(data => this.assetsCache.next(data)),
-        catchError(err => {
-          console.warn('[AssetService] Backend indisponible, utilisation des assets locaux', err);
-          return of({});
-        })
-      );
+    this.loaded = true;
+
+    return this.http.get<{ success: boolean; data: AssetsGrouped }>(this.publicUrl).pipe(
+      map(res => res.data),
+      catchError(err => {
+        console.warn('[AssetService] Backend indisponible, utilisation des assets locaux', err);
+        return of({} as AssetsGrouped);
+      }),
+      tap(data => this.assetsCache$.next(data))
+    );
+  }
+
+  /** Observable qui émet UNE FOIS quand le cache est prêt */
+  whenReady(): Observable<AssetsGrouped> {
+    return this.assetsCache$.pipe(
+      filter(cache => cache !== null),
+      take(1),
+      map(cache => cache as AssetsGrouped)
+    );
   }
 
   invalidateCache(): void {
-    this.assetsCache.next(null);
+    this.loaded = false;
+    this.assetsCache$.next(null);
   }
 
-  // ── Récupération ──────────────────────────────────────────────
+  // ── Récupération synchrone (depuis le cache) ──────────────────
 
   getUrl(key: string): string {
-    const cache = this.assetsCache.value;
+    const cache = this.assetsCache$.value;
     if (cache) {
       for (const category of Object.values(cache)) {
         if (Array.isArray(category)) {
@@ -84,21 +97,11 @@ export class AssetService {
         }
       }
     }
-    // Fallback vers les fichiers statiques Angular
     return this.fallbacks[key] ?? '';
   }
 
-  /** Convertit les URLs relatives du backend en URLs absolues */
-  private resolveUrl(url: string): string {
-    if (!url) return '';
-    // Déjà une URL absolue (http/https ou data:)
-    if (url.startsWith('http') || url.startsWith('data:')) return url;
-    // URL relative (/storage/assets/...) → préfixer avec la base Laravel
-    return `${environment.apiUrl}${url.startsWith('/') ? '' : '/'}${url}`;
-  }
-
   getAsset(key: string): SiteAsset | null {
-    const cache = this.assetsCache.value;
+    const cache = this.assetsCache$.value;
     if (!cache) return null;
     for (const category of Object.values(cache)) {
       if (Array.isArray(category)) {
@@ -110,9 +113,15 @@ export class AssetService {
   }
 
   getByCategory(category: string): SiteAsset[] {
-    const cache = this.assetsCache.value;
+    const cache = this.assetsCache$.value;
     if (!cache) return [];
     return (cache as any)[category] ?? [];
+  }
+
+  private resolveUrl(url: string): string {
+    if (!url) return '';
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
+    return `${environment.apiUrl}${url.startsWith('/') ? '' : '/'}${url}`;
   }
 
   // ── API Admin ─────────────────────────────────────────────────
