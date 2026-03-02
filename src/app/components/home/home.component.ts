@@ -1,3 +1,5 @@
+// home.component.ts
+// Affichage IMMÉDIAT — le chargement backend se fait en arrière-plan
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -24,15 +26,15 @@ import { AssetService } from '../../services/asset.service';
     FooterComponent,
     EventsComponent
   ],
-  templateUrl:'./home.component.html'
+  templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
   private assetService = inject(AssetService);
-  assetsReady = false;
 
   ngOnInit(): void {
-    this.assetService.loadAll().subscribe(() => {
-      this.assetsReady = true;
-    });
+    // Lance en arrière-plan : les composants enfants s'affichent immédiatement
+    // avec les fallbacks locaux, puis se mettent à jour automatiquement
+    // via leurs async pipes quand le backend répond
+    this.assetService.loadAll().subscribe();
   }
 }

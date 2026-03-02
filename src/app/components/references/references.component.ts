@@ -1,10 +1,12 @@
 import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, NgIf, NgFor } from '@angular/common';
 import { AssetService, SiteAsset } from '../../services/asset.service';
+import { Observable, combineLatest, map } from 'rxjs';
 
 @Component({
   selector: 'app-references',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [AsyncPipe, NgIf, NgFor],
   templateUrl: './references.component.html',
   styleUrl: './references.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -12,16 +14,19 @@ import { AssetService, SiteAsset } from '../../services/asset.service';
 export class ReferencesComponent implements OnInit {
   private assetService = inject(AssetService);
 
-  fdfpLogoUrl    = '';
-  codivalLogoUrl = '';
-  oscnLogoUrl    = '';
-  partners: SiteAsset[] = [];
+  vm$!: Observable<{ fdfpUrl: string; codivalUrl: string; oscnUrl: string }>;
+  partners$!: Observable<SiteAsset[]>;
 
   ngOnInit(): void {
-    this.fdfpLogoUrl    = this.assetService.getUrl('logo-fdfp');
-    this.codivalLogoUrl = this.assetService.getUrl('partner-codival');
-    this.oscnLogoUrl    = this.assetService.getUrl('partner-oscn');
-    this.partners       = this.assetService.getByCategory('partner');
+    this.vm$ = combineLatest([
+      this.assetService.getUrl$('logo-fdfp'),
+      this.assetService.getUrl$('partner-codival'),
+      this.assetService.getUrl$('partner-oscn'),
+    ]).pipe(
+      map(([fdfpUrl, codivalUrl, oscnUrl]) => ({ fdfpUrl, codivalUrl, oscnUrl }))
+    );
+
+    this.partners$ = this.assetService.getByCategory$('partner');
   }
 
   staticPartners = [
