@@ -4,11 +4,13 @@
     <div class="text-center">
       <img src="assets/logos/0-removebg-preview 1.png" alt="MAJEX CONSULTING" class="h-24 mx-auto mb-6">
       <h2 class="text-3xl font-bold text-majex-secondary">Administration</h2>
-      <p class="mt-2 text-majex-gray-600">Connectez-vous pour accéder au panneau d'administration</p>
+      <p class="mt-2 text-majex-gray-600">
+        {{ showCodeInput ? 'Vérification en deux étapes' : 'Connectez-vous pour accéder au panneau d\'administration' }}
+      </p>
     </div>
 
-    <!-- Formulaire -->
-    <form class="mt-8 space-y-6 majex-card" (ngSubmit)="onSubmit()">
+    <!-- ========== ÉTAPE 1 : Email + Password ========== -->
+    <form *ngIf="!showCodeInput" class="mt-8 space-y-6 majex-card" (ngSubmit)="onSubmit()">
       <div class="space-y-4">
         <!-- Email -->
         <div>
@@ -21,6 +23,7 @@
             type="email"
             [(ngModel)]="email"
             required
+            autocomplete="email"
             class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg focus:ring-2 focus:ring-majex-primary focus:border-transparent transition"
             placeholder="admin@majexconsulting.com"
             [disabled]="loading"
@@ -38,6 +41,7 @@
             type="password"
             [(ngModel)]="password"
             required
+            autocomplete="current-password"
             class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg focus:ring-2 focus:ring-majex-primary focus:border-transparent transition"
             placeholder="••••••••"
             [disabled]="loading"
@@ -74,11 +78,83 @@
       </div>
     </form>
 
-    <!-- Informations de test -->
-    <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-      <p class="text-xs text-blue-800 font-semibold mb-2">🔐 Identifiants de test :</p>
-      <p class="text-xs text-blue-700">Email: admin&#64;majexconsulting.com</p>
-      <p class="text-xs text-blue-700">Mot de passe: password123</p>
-    </div>
+    <!-- ========== ÉTAPE 2 : Code 2FA ========== -->
+    <form *ngIf="showCodeInput" class="mt-8 space-y-6 majex-card" (ngSubmit)="onVerifyCode()">
+      <!-- Message d'info -->
+      <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <div>
+            <p class="text-sm font-semibold mb-1">Code de vérification envoyé</p>
+            <p class="text-xs">Un code à 6 chiffres a été envoyé à <strong>{{ email }}</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code 2FA -->
+      <div>
+        <label for="code" class="block text-sm font-medium text-majex-secondary mb-2">
+          Code de vérification
+        </label>
+        <input
+          id="code"
+          name="code"
+          type="text"
+          [(ngModel)]="code"
+          required
+          maxlength="6"
+          pattern="[0-9]{6}"
+          autocomplete="one-time-code"
+          class="w-full px-4 py-3 border border-majex-gray-300 rounded-lg focus:ring-2 focus:ring-majex-primary focus:border-transparent transition text-center text-2xl tracking-widest font-mono"
+          placeholder="000000"
+          [disabled]="loading"
+          autofocus
+        >
+        <p class="text-xs text-majex-gray-600 mt-2 text-center">Saisissez le code à 6 chiffres</p>
+      </div>
+
+      <!-- Message d'erreur -->
+      <div *ngIf="errorMessage" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <p class="text-sm">{{ errorMessage }}</p>
+      </div>
+
+      <!-- Bouton de vérification -->
+      <button
+        type="submit"
+        [disabled]="loading || !code || code.length !== 6"
+        class="btn-majex-primary w-full py-4 text-lg hover-majex-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+      >
+        <span *ngIf="!loading">Vérifier le code</span>
+        <span *ngIf="loading" class="flex items-center">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Vérification...
+        </span>
+      </button>
+
+      <!-- Actions secondaires -->
+      <div class="flex items-center justify-between text-sm">
+        <button
+          type="button"
+          (click)="goBack()"
+          [disabled]="loading"
+          class="text-majex-gray-600 hover:text-majex-secondary transition disabled:opacity-50"
+        >
+          ← Modifier l'email
+        </button>
+        <button
+          type="button"
+          (click)="resendCode()"
+          [disabled]="loading"
+          class="text-majex-primary hover:text-majex-accent transition disabled:opacity-50"
+        >
+          Renvoyer le code
+        </button>
+      </div>
+    </form>
   </div>
 </div>

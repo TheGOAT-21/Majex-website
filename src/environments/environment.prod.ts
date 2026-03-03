@@ -10,24 +10,26 @@
  */
 
 export const environment = {
-  production: true,  // true = mode production
-  apiUrl: 'https://api.majexconsulting.com/api'  // URL de votre backend en production sur Hostinger
+  production: true,
+  apiUrl: 'https://majexconsulting.com'  // ⚠️ À REMPLACER par votre vraie URL de production
 };
 
 /**
  * ====================================================================
- * IMPORTANT : À MODIFIER AVANT LE DÉPLOIEMENT
+ * CONFIGURATION PRODUCTION
  * ====================================================================
- * 
- * Quand vous déployez votre backend Laravel sur Hostinger, vous devrez :
- * 
- * 1. Remplacer 'https://api.majexconsulting.com/api' par votre vraie URL
- *    Exemples possibles :
- *    - https://majexconsulting.com/api (si backend et frontend même domaine)
- *    - https://backend.majexconsulting.com/api (sous-domaine dédié)
- * 
- * 2. S'assurer que le CORS est bien configuré dans Laravel
- *    (le fichier cors.php doit autoriser votre domaine frontend)
- * 
+ *
+ * AVANT LE DÉPLOIEMENT, REMPLACEZ L'URL PAR :
+ *
+ * 1. Votre domaine de production Hostinger :
+ *    - https://majexconsulting.com (si backend et frontend même domaine)
+ *    - https://api.majexconsulting.com (sous-domaine API dédié)
+ *
+ * 2. Vérifications backend Laravel requises :
+ *    ✓ CORS configuré pour autoriser le domaine frontend
+ *    ✓ APP_URL dans .env correspond à l'URL de production
+ *    ✓ Certificat SSL/HTTPS actif
+ *    ✓ Rate limiting configuré pour /api/login et /api/login/verify
+ *
  * ====================================================================
  */

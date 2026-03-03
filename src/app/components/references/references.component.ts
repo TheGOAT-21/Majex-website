@@ -1,41 +1,26 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { AsyncPipe, NgIf, NgFor } from '@angular/common';
-import { AssetService, SiteAsset } from '../../services/asset.service';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-references',
   standalone: true,
-  imports: [AsyncPipe, NgIf, NgFor],
+  imports: [NgFor],
   templateUrl: './references.component.html',
   styleUrl: './references.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ReferencesComponent implements OnInit {
-  private assetService = inject(AssetService);
+export class ReferencesComponent {
+  fdfpUrl    = 'assets/logos/fdfp.png';
+  codivalUrl = 'assets/partenaire_logos/codival.svg';
+  oscnUrl    = 'assets/partenaire_logos/OSCN.png';
 
-  vm$!: Observable<{ fdfpUrl: string; codivalUrl: string; oscnUrl: string }>;
-  partners$!: Observable<SiteAsset[]>;
-
-  ngOnInit(): void {
-    this.vm$ = combineLatest([
-      this.assetService.getUrl$('logo-fdfp'),
-      this.assetService.getUrl$('partner-codival'),
-      this.assetService.getUrl$('partner-oscn'),
-    ]).pipe(
-      map(([fdfpUrl, codivalUrl, oscnUrl]) => ({ fdfpUrl, codivalUrl, oscnUrl }))
-    );
-
-    this.partners$ = this.assetService.getByCategory$('partner');
-  }
-
-  staticPartners = [
-    { key: 'partner-rti',          alt: 'RTI',                     src: 'assets/partenaire_logos/RTI.webp' },
-    { key: 'partner-anac',         alt: 'ANAC',                    src: 'assets/partenaire_logos/ANAC.png' },
-    { key: 'partner-port-abidjan', alt: "Port Autonome d'Abidjan", src: 'assets/partenaire_logos/Port Autonome Abidjan.png' },
-    { key: 'partner-oscn',         alt: 'OSCN',                    src: 'assets/partenaire_logos/OSCN.png' },
-    { key: 'partner-aderiz',       alt: 'ADERIZ',                  src: 'assets/partenaire_logos/ADERIZ.png' },
-    { key: 'partner-codival',      alt: 'CODIVAL',                 src: 'assets/partenaire_logos/codival.svg' },
-    { key: 'partner-kaera',        alt: 'Kaera',                   src: 'assets/partenaire_logos/Kaera.svg' },
+  partners = [
+    { alt: 'RTI',          src: 'assets/partenaire_logos/RTI.webp' },
+    { alt: 'ANAC',         src: 'assets/partenaire_logos/ANAC.png' },
+    { alt: 'Port Abidjan', src: 'assets/partenaire_logos/Port Autonome Abidjan.png' },
+    { alt: 'OSCN',         src: 'assets/partenaire_logos/OSCN.png' },
+    { alt: 'ADERIZ',       src: 'assets/partenaire_logos/ADERIZ.png' },
+    { alt: 'CODIVAL',      src: 'assets/partenaire_logos/codival.svg' },
+    { alt: 'Kaera',        src: 'assets/partenaire_logos/Kaera.svg' },
   ];
 }

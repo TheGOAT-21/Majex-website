@@ -1,36 +1,16 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
-import { AssetService } from '../../services/asset.service';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [AsyncPipe, NgIf],
+  imports: [],
   templateUrl: './about.component.html',
   styleUrl: './about.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AboutComponent implements OnInit {
-  private assetService = inject(AssetService);
-
-  vm$!: Observable<{
-    officeUrl: string;
-    teamUrl: string;
-    fdfpUrl: string;
-    metfpaUrl: string;
-  }>;
-
-  ngOnInit(): void {
-    this.vm$ = combineLatest([
-      this.assetService.getUrl$('about-office'),
-      this.assetService.getUrl$('about-team'),
-      this.assetService.getUrl$('logo-fdfp'),
-      this.assetService.getUrl$('logo-metfpa'),
-    ]).pipe(
-      map(([officeUrl, teamUrl, fdfpUrl, metfpaUrl]) => ({
-        officeUrl, teamUrl, fdfpUrl, metfpaUrl
-      }))
-    );
-  }
+export class AboutComponent {
+  officeUrl = 'assets/images/pic7.jpg';
+  teamUrl   = 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80';
+  fdfpUrl   = 'assets/logos/fdfp.png';
+  metfpaUrl = 'assets/logos/Logo-METFPA-2.png';
 }

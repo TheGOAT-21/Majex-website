@@ -1,6 +1,4 @@
-// home.component.ts
-// Affichage IMMÉDIAT — le chargement backend se fait en arrière-plan
-import { Component, OnInit, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { HeroComponent } from '../hero/hero.component';
@@ -10,7 +8,6 @@ import { ReferencesComponent } from '../references/references.component';
 import { ContactComponent } from '../contact/contact.component';
 import { FooterComponent } from '../footer/footer.component';
 import { EventsComponent } from '../events/events.component';
-import { AssetService } from '../../services/asset.service';
 
 @Component({
   selector: 'app-home',
@@ -28,13 +25,4 @@ import { AssetService } from '../../services/asset.service';
   ],
   templateUrl: './home.component.html'
 })
-export class HomeComponent implements OnInit {
-  private assetService = inject(AssetService);
-
-  ngOnInit(): void {
-    // Lance en arrière-plan : les composants enfants s'affichent immédiatement
-    // avec les fallbacks locaux, puis se mettent à jour automatiquement
-    // via leurs async pipes quand le backend répond
-    this.assetService.loadAll().subscribe();
-  }
-}
+export class HomeComponent {}

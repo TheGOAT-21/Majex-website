@@ -1,207 +1,200 @@
-<!-- services.component.html -->
-<!-- On enveloppe uniquement les images dans ng-container *ngIf="vm$ | async as vm"
-     Le reste du template statique s'affiche immédiatement sans attendre -->
-     <section id="services" class="py-32 bg-white">
-      <div class="container mx-auto px-6">
-        <div class="max-w-4xl mx-auto text-center mb-32">
-          <h2 class="text-5xl md:text-6xl font-bold text-majex-secondary mb-6">Nos Services</h2>
-          <div class="w-20 h-1 bg-majex-primary mx-auto rounded-full mb-8"></div>
-          <p class="text-xl text-majex-gray-600 leading-relaxed">Des solutions d'excellence pour accompagner votre croissance</p>
-        </div>
-    
-        <!-- FORMATION -->
-        <div class="max-w-7xl mx-auto mb-48">
-          <div class="grid lg:grid-cols-12 gap-16 items-center">
-            <div class="lg:col-span-5">
-              <span class="text-majex-primary font-bold text-2xl uppercase tracking-widest mb-6 block">Formation</span>
-              <h3 class="text-5xl font-bold text-majex-secondary mb-8 leading-tight">Excellence<br/>Pédagogique</h3>
-              <div class="space-y-6 mb-12">
-                <div>
-                  <h4 class="font-bold text-majex-secondary mb-3 text-2xl">Formation Professionnelle</h4>
-                  <p class="text-majex-gray-600 leading-relaxed">Inter & intra-entreprise. Cabinet agréé FDFP depuis 2011.</p>
-                  <div class="mt-4 flex flex-wrap gap-2">
-                    <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">Bureautique</span>
-                    <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">Gestion</span>
-                    <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">Logistique</span>
-                    <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">RH</span>
-                    <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">IA & Cyber</span>
-                  </div>
-                </div>
-                <div class="pt-6 border-t border-majex-gray-200">
-                  <h4 class="font-bold text-majex-secondary mb-3 text-2xl">Formation Qualifiante</h4>
-                  <p class="text-majex-gray-600 leading-relaxed">Certifications reconnues par l'État - BTP, Santé, Mines</p>
-                </div>
+<section id="services" class="py-32 bg-white">
+  <div class="container mx-auto px-6">
+    <div class="max-w-4xl mx-auto text-center mb-32">
+      <h2 class="text-5xl md:text-6xl font-bold text-majex-secondary mb-6">Nos Services</h2>
+      <div class="w-20 h-1 bg-majex-primary mx-auto rounded-full mb-8"></div>
+      <p class="text-xl text-majex-gray-600 leading-relaxed">Des solutions d'excellence pour accompagner votre croissance</p>
+    </div>
+
+    <!-- FORMATION -->
+    <div class="max-w-7xl mx-auto mb-48">
+      <div class="grid lg:grid-cols-12 gap-16 items-center">
+        <div class="lg:col-span-5">
+          <span class="text-majex-primary font-bold text-2xl uppercase tracking-widest mb-6 block">Formation</span>
+          <h3 class="text-5xl font-bold text-majex-secondary mb-8 leading-tight">Excellence<br/>Pédagogique</h3>
+          <div class="space-y-6 mb-12">
+            <div>
+              <h4 class="font-bold text-majex-secondary mb-3 text-2xl">Formation Professionnelle</h4>
+              <p class="text-majex-gray-600 leading-relaxed">Inter & intra-entreprise. Cabinet agréé FDFP depuis 2011.</p>
+              <div class="mt-4 flex flex-wrap gap-2">
+                <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">Bureautique</span>
+                <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">Gestion</span>
+                <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">Logistique</span>
+                <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">RH</span>
+                <span class="text-xs bg-majex-gray-50 text-majex-secondary px-3 py-1 rounded-full">IA & Cyber</span>
               </div>
-              <a href="#contact" class="inline-flex items-center gap-3 bg-majex-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-majex-secondary transition group">
-                Découvrir nos formations
-                <svg class="w-5 h-5 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </a>
             </div>
-            <div class="lg:col-span-7">
-              <ng-container *ngIf="vm$ | async as vm">
-                <div class="relative">
-                  <div class="absolute -top-8 -left-8 w-full h-full bg-majex-primary/5 rounded-2xl"></div>
-                  <img [src]="vm.formationUrl" alt="Formation professionnelle"
-                       class="relative rounded-2xl shadow-2xl w-full h-[500px] object-cover">
-                  <div class="absolute -bottom-8 -right-8 bg-white p-8 rounded-xl shadow-2xl max-w-xs">
-                    <p class="text-4xl font-bold text-majex-primary mb-2">1,000+</p>
-                    <p class="text-majex-secondary font-semibold">Professionnels formés depuis 2011</p>
-                  </div>
-                </div>
-              </ng-container>
+            <div class="pt-6 border-t border-majex-gray-200">
+              <h4 class="font-bold text-majex-secondary mb-3 text-2xl">Formation Qualifiante</h4>
+              <p class="text-majex-gray-600 leading-relaxed">Certifications reconnues par l'État - BTP, Santé, Mines</p>
+            </div>
+          </div>
+          <a href="#contact" class="inline-flex items-center gap-3 bg-majex-primary text-white px-8 py-4 rounded-lg font-semibold hover:bg-majex-secondary transition group">
+            Découvrir nos formations
+            <svg class="w-5 h-5 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+        </div>
+        <div class="lg:col-span-7">
+          <div class="relative">
+            <div class="absolute -top-8 -left-8 w-full h-full bg-majex-primary/5 rounded-2xl"></div>
+            <img [src]="formationUrl" alt="Formation professionnelle"
+                 class="relative rounded-2xl shadow-2xl w-full h-[500px] object-cover">
+            <div class="absolute -bottom-8 -right-8 bg-white p-8 rounded-xl shadow-2xl max-w-xs">
+              <p class="text-4xl font-bold text-majex-primary mb-2">1,000+</p>
+              <p class="text-majex-secondary font-semibold">Professionnels formés depuis 2011</p>
             </div>
           </div>
         </div>
-    
-        <!-- CONSEIL -->
-        <div class="max-w-7xl mx-auto mb-48">
-          <div class="grid lg:grid-cols-12 gap-16 items-center">
-            <div class="lg:col-span-6 lg:order-1 order-2">
-              <ng-container *ngIf="vm$ | async as vm">
-                <div class="relative h-[600px]">
-                  <img [src]="vm.conseilUrl" alt="Conseil stratégique"
-                       class="absolute inset-0 w-full h-full object-cover rounded-2xl shadow-2xl">
-                  <div class="absolute inset-0 bg-gradient-to-t from-majex-secondary/60 to-transparent rounded-2xl"></div>
-                </div>
-              </ng-container>
-            </div>
-            <div class="lg:col-span-6 lg:order-2 order-1">
-              <span class="text-majex-accent font-bold text-2xl uppercase tracking-widest mb-6 block">Conseil & Étude</span>
-              <h3 class="text-5xl font-bold text-majex-secondary mb-12 leading-tight">Expertise<br/>Stratégique</h3>
-              <div class="space-y-10">
-                <div class="border-l-4 border-majex-primary pl-6">
-                  <h4 class="text-xl font-bold text-majex-secondary mb-3">Organisation & Stratégie</h4>
-                  <p class="text-majex-gray-600 mb-4 leading-relaxed">Diagnostic, planification stratégique et conduite du changement</p>
-                </div>
-                <div class="border-l-4 border-majex-accent pl-6">
-                  <h4 class="text-xl font-bold text-majex-secondary mb-3">Ressources Humaines</h4>
-                  <p class="text-majex-gray-600 mb-4 leading-relaxed">Gestion des talents, évaluation des performances et politique RH</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-    
-        <!-- RECRUTEMENT -->
-        <div class="max-w-7xl mx-auto mb-48">
-          <div class="bg-gradient-majex-soft rounded-3xl p-12 lg:p-20">
-            <div class="grid lg:grid-cols-3 gap-16">
-              <div class="lg:col-span-2">
-                <span class="text-majex-primary font-bold text-2xl uppercase tracking-widest mb-6 block">Recrutement & Ressources Humaines</span>
-                <h3 class="text-5xl font-bold text-majex-secondary mb-8 leading-tight">Solutions de Recrutement,<br/>Intérim & Placement</h3>
-                <p class="text-xl text-majex-gray-600 mb-12 leading-relaxed">Personnel qualifié et solutions flexibles pour les entreprises</p>
-    
-                <div class="mb-12">
-                  <h4 class="text-2xl font-bold text-majex-secondary mb-6">Processus de Recrutement</h4>
-                  <div class="grid md:grid-cols-2 gap-6">
-                    <div *ngFor="let step of recrutementSteps" class="flex gap-4">
-                      <div class="flex-shrink-0 w-12 h-12 text-white rounded-xl flex items-center justify-center font-bold text-lg"
-                           [class.bg-majex-primary]="step.num <= 4"
-                           [class.bg-majex-accent]="step.num === 5">{{ step.num }}</div>
-                      <div>
-                        <h5 class="font-bold text-majex-secondary mb-1">{{ step.title }}</h5>
-                        <p class="text-sm text-majex-gray-600">{{ step.desc }}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-    
-                <div class="space-y-12 mb-12">
-                  <div class="border-l-4 border-majex-primary pl-8">
-                    <h4 class="text-3xl font-bold text-majex-secondary mb-6">Intérim Court Terme</h4>
-                    <ul class="space-y-3 text-majex-gray-600 text-lg">
-                      <li class="flex items-start gap-3"><span class="text-majex-primary mt-1 text-xl">•</span><span>Remplacement temporaire (congés, maladie)</span></li>
-                      <li class="flex items-start gap-3"><span class="text-majex-primary mt-1 text-xl">•</span><span>Renfort pour pics d'activité</span></li>
-                      <li class="flex items-start gap-3"><span class="text-majex-primary mt-1 text-xl">•</span><span>Missions ponctuelles - Personnel qualifié immédiatement disponible</span></li>
-                    </ul>
-                  </div>
-                  <div class="border-l-4 border-majex-accent pl-8">
-                    <h4 class="text-3xl font-bold text-majex-secondary mb-6">Intérim Long Terme</h4>
-                    <ul class="space-y-3 text-majex-gray-600 text-lg">
-                      <li class="flex items-start gap-3"><span class="text-majex-accent mt-1 text-xl">•</span><span>Projets de plusieurs mois</span></li>
-                      <li class="flex items-start gap-3"><span class="text-majex-accent mt-1 text-xl">•</span><span>CDD avec possibilité de CDI</span></li>
-                      <li class="flex items-start gap-3"><span class="text-majex-accent mt-1 text-xl">•</span><span>Période d'essai sécurisée</span></li>
-                      <li class="flex items-start gap-3"><span class="text-majex-accent mt-1 text-xl">•</span><span>Flexibilité de gestion RH</span></li>
-                    </ul>
-                  </div>
-                </div>
-    
-                <div class="mb-8">
-                  <h4 class="text-xl font-bold text-majex-secondary mb-4">Secteurs Couverts</h4>
-                  <div class="flex flex-wrap gap-3">
-                    <span *ngFor="let s of secteurs" class="text-sm bg-white text-majex-secondary px-4 py-2 rounded-lg">{{ s }}</span>
-                  </div>
-                </div>
-              </div>
-    
-              <div class="lg:col-span-1">
-                <ng-container *ngIf="vm$ | async as vm">
-                  <div class="sticky top-8">
-                    <img [src]="vm.recrutementUrl" alt="Recrutement"
-                         class="w-full h-[600px] object-cover rounded-2xl shadow-xl">
-                  </div>
-                </ng-container>
-              </div>
-            </div>
-          </div>
-        </div>
-    
-        <!-- INGÉNIERIE IT -->
-        <div class="max-w-7xl mx-auto mb-48">
-          <div class="text-center mb-20">
-            <span class="text-majex-secondary font-bold text-2xl uppercase tracking-widest mb-6 block">Ingénierie</span>
-            <h3 class="text-5xl font-bold text-majex-secondary mb-6">Solutions Digitales</h3>
-            <p class="text-xl text-majex-gray-600 max-w-2xl mx-auto">Innovation technologique & transformation numérique</p>
-          </div>
-          <div class="grid md:grid-cols-3 gap-12">
-            <div *ngFor="let card of itCards" class="group">
-              <div class="mb-6 overflow-hidden rounded-xl">
-                <img [src]="card.img" [alt]="card.title" class="w-full h-64 object-cover group-hover:scale-105 transition duration-500">
-              </div>
-              <h4 class="text-2xl font-bold text-majex-secondary mb-4">{{ card.title }}</h4>
-              <p class="text-majex-gray-600 mb-6 leading-relaxed">{{ card.desc }}</p>
-              <div class="w-12 h-1 rounded-full" [class.bg-majex-primary]="card.color === 'primary'" [class.bg-majex-accent]="card.color === 'accent'"></div>
-            </div>
-          </div>
-        </div>
-    
-        <!-- LOCATION D'ESPACES -->
-        <div class="max-w-7xl mx-auto">
-          <div class="relative rounded-3xl overflow-hidden">
-            <div class="absolute inset-0">
-              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-                   alt="Salle de conférence" class="w-full h-full object-cover">
-              <div class="absolute inset-0 bg-majex-secondary/90"></div>
-            </div>
-            <div class="relative text-white p-12 lg:p-20">
-              <div class="max-w-3xl mb-16">
-                <span class="text-white/80 font-bold text-2xl uppercase tracking-widest mb-8 block">Espaces</span>
-                <h3 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">Salles<br/>Professionnelles</h3>
-                <p class="text-2xl text-white/90 leading-relaxed">Espaces équipés pour vos formations, réunions et événements professionnels</p>
-              </div>
-              <div class="grid md:grid-cols-3 gap-8 mb-16">
-                <div *ngFor="let espace of espaces" class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/20">
-                  <h4 class="text-3xl font-bold mb-4">{{ espace.name }}</h4>
-                  <p class="text-white/90 mb-4 text-lg">{{ espace.capacity }}</p>
-                  <div class="flex flex-wrap gap-2">
-                    <span *ngFor="let eq of espace.equipment" class="text-xs bg-white/20 px-3 py-1.5 rounded-full">{{ eq }}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="text-center">
-                <a href="#contact" class="inline-flex items-center gap-3 bg-white text-majex-secondary px-12 py-6 rounded-xl font-bold hover:bg-majex-primary hover:text-white transition text-xl group shadow-2xl">
-                  Réserver un espace
-                  <svg class="w-6 h-6 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                  </svg>
-                </a>
-                <p class="text-white/70 mt-6 text-lg">Location flexible à l'heure, demi-journée ou journée complète</p>
-              </div>
-            </div>
-          </div>
-        </div>
-    
       </div>
-    </section>
+    </div>
+
+    <!-- CONSEIL -->
+    <div class="max-w-7xl mx-auto mb-48">
+      <div class="grid lg:grid-cols-12 gap-16 items-center">
+        <div class="lg:col-span-6 lg:order-1 order-2">
+          <div class="relative h-[600px]">
+            <img [src]="conseilUrl" alt="Conseil stratégique"
+                 class="absolute inset-0 w-full h-full object-cover rounded-2xl shadow-2xl">
+            <div class="absolute inset-0 bg-gradient-to-t from-majex-secondary/60 to-transparent rounded-2xl"></div>
+          </div>
+        </div>
+        <div class="lg:col-span-6 lg:order-2 order-1">
+          <span class="text-majex-accent font-bold text-2xl uppercase tracking-widest mb-6 block">Conseil & Étude</span>
+          <h3 class="text-5xl font-bold text-majex-secondary mb-12 leading-tight">Expertise<br/>Stratégique</h3>
+          <div class="space-y-10">
+            <div class="border-l-4 border-majex-primary pl-6">
+              <h4 class="text-xl font-bold text-majex-secondary mb-3">Organisation & Stratégie</h4>
+              <p class="text-majex-gray-600 mb-4 leading-relaxed">Diagnostic, planification stratégique et conduite du changement</p>
+            </div>
+            <div class="border-l-4 border-majex-accent pl-6">
+              <h4 class="text-xl font-bold text-majex-secondary mb-3">Ressources Humaines</h4>
+              <p class="text-majex-gray-600 mb-4 leading-relaxed">Gestion des talents, évaluation des performances et politique RH</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECRUTEMENT -->
+    <div class="max-w-7xl mx-auto mb-48">
+      <div class="bg-gradient-majex-soft rounded-3xl p-12 lg:p-20">
+        <div class="grid lg:grid-cols-3 gap-16">
+          <div class="lg:col-span-2">
+            <span class="text-majex-primary font-bold text-2xl uppercase tracking-widest mb-6 block">Recrutement & Ressources Humaines</span>
+            <h3 class="text-5xl font-bold text-majex-secondary mb-8 leading-tight">Solutions de Recrutement,<br/>Intérim & Placement</h3>
+            <p class="text-xl text-majex-gray-600 mb-12 leading-relaxed">Personnel qualifié et solutions flexibles pour les entreprises</p>
+
+            <div class="mb-12">
+              <h4 class="text-2xl font-bold text-majex-secondary mb-6">Processus de Recrutement</h4>
+              <div class="grid md:grid-cols-2 gap-6">
+                <div *ngFor="let step of recrutementSteps" class="flex gap-4">
+                  <div class="flex-shrink-0 w-12 h-12 text-white rounded-xl flex items-center justify-center font-bold text-lg"
+                       [class.bg-majex-primary]="step.num <= 4"
+                       [class.bg-majex-accent]="step.num === 5">{{ step.num }}</div>
+                  <div>
+                    <h5 class="font-bold text-majex-secondary mb-1">{{ step.title }}</h5>
+                    <p class="text-sm text-majex-gray-600">{{ step.desc }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-12 mb-12">
+              <div class="border-l-4 border-majex-primary pl-8">
+                <h4 class="text-3xl font-bold text-majex-secondary mb-6">Intérim Court Terme</h4>
+                <ul class="space-y-3 text-majex-gray-600 text-lg">
+                  <li class="flex items-start gap-3"><span class="text-majex-primary mt-1 text-xl">•</span><span>Remplacement temporaire (congés, maladie)</span></li>
+                  <li class="flex items-start gap-3"><span class="text-majex-primary mt-1 text-xl">•</span><span>Renfort pour pics d'activité</span></li>
+                  <li class="flex items-start gap-3"><span class="text-majex-primary mt-1 text-xl">•</span><span>Missions ponctuelles - Personnel qualifié immédiatement disponible</span></li>
+                </ul>
+              </div>
+              <div class="border-l-4 border-majex-accent pl-8">
+                <h4 class="text-3xl font-bold text-majex-secondary mb-6">Intérim Long Terme</h4>
+                <ul class="space-y-3 text-majex-gray-600 text-lg">
+                  <li class="flex items-start gap-3"><span class="text-majex-accent mt-1 text-xl">•</span><span>Projets de plusieurs mois</span></li>
+                  <li class="flex items-start gap-3"><span class="text-majex-accent mt-1 text-xl">•</span><span>CDD avec possibilité de CDI</span></li>
+                  <li class="flex items-start gap-3"><span class="text-majex-accent mt-1 text-xl">•</span><span>Période d'essai sécurisée</span></li>
+                  <li class="flex items-start gap-3"><span class="text-majex-accent mt-1 text-xl">•</span><span>Flexibilité de gestion RH</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="mb-8">
+              <h4 class="text-xl font-bold text-majex-secondary mb-4">Secteurs Couverts</h4>
+              <div class="flex flex-wrap gap-3">
+                <span *ngFor="let s of secteurs" class="text-sm bg-white text-majex-secondary px-4 py-2 rounded-lg">{{ s }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-1">
+            <div class="sticky top-8">
+              <img [src]="recrutementUrl" alt="Recrutement"
+                   class="w-full h-[600px] object-cover rounded-2xl shadow-xl">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INGÉNIERIE IT -->
+    <div class="max-w-7xl mx-auto mb-48">
+      <div class="text-center mb-20">
+        <span class="text-majex-secondary font-bold text-2xl uppercase tracking-widest mb-6 block">Ingénierie</span>
+        <h3 class="text-5xl font-bold text-majex-secondary mb-6">Solutions Digitales</h3>
+        <p class="text-xl text-majex-gray-600 max-w-2xl mx-auto">Innovation technologique & transformation numérique</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-12">
+        <div *ngFor="let card of itCards" class="group">
+          <div class="mb-6 overflow-hidden rounded-xl">
+            <img [src]="card.img" [alt]="card.title" class="w-full h-64 object-cover group-hover:scale-105 transition duration-500">
+          </div>
+          <h4 class="text-2xl font-bold text-majex-secondary mb-4">{{ card.title }}</h4>
+          <p class="text-majex-gray-600 mb-6 leading-relaxed">{{ card.desc }}</p>
+          <div class="w-12 h-1 rounded-full"
+               [class.bg-majex-primary]="card.color === 'primary'"
+               [class.bg-majex-accent]="card.color === 'accent'"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCATION D'ESPACES -->
+    <div class="max-w-7xl mx-auto">
+      <div class="relative rounded-3xl overflow-hidden">
+        <div class="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+               alt="Salle de conférence" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-majex-secondary/90"></div>
+        </div>
+        <div class="relative text-white p-12 lg:p-20">
+          <div class="max-w-3xl mb-16">
+            <span class="text-white/80 font-bold text-2xl uppercase tracking-widest mb-8 block">Espaces</span>
+            <h3 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">Salles<br/>Professionnelles</h3>
+            <p class="text-2xl text-white/90 leading-relaxed">Espaces équipés pour vos formations, réunions et événements professionnels</p>
+          </div>
+          <div class="grid md:grid-cols-3 gap-8 mb-16">
+            <div *ngFor="let espace of espaces" class="bg-white/10 backdrop-blur-md p-8 rounded-xl border border-white/20">
+              <h4 class="text-3xl font-bold mb-4">{{ espace.name }}</h4>
+              <p class="text-white/90 mb-4 text-lg">{{ espace.capacity }}</p>
+              <div class="flex flex-wrap gap-2">
+                <span *ngFor="let eq of espace.equipment" class="text-xs bg-white/20 px-3 py-1.5 rounded-full">{{ eq }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-center">
+            <a href="#contact" class="inline-flex items-center gap-3 bg-white text-majex-secondary px-12 py-6 rounded-xl font-bold hover:bg-majex-primary hover:text-white transition text-xl group shadow-2xl">
+              Réserver un espace
+              <svg class="w-6 h-6 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+            <p class="text-white/70 mt-6 text-lg">Location flexible à l'heure, demi-journée ou journée complète</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -3,23 +3,22 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export interface AuthResponse {
-  success?: boolean;
-  message?: string;
-  data?: {
+export interface LoginResponse {
+  success: boolean;
+  two_factor: boolean;
+  message: string;
+}
+
+export interface VerifyResponse {
+  success: boolean;
+  message: string;
+  data: {
     token: string;
     user: {
       id: number;
       name: string;
       email: string;
     };
-  };
-  // Format alternatif (au cas où le backend change)
-  token?: string;
-  user?: {
-    id: number;
-    name: string;
-    email: string;
   };
 }
 
@@ -33,16 +32,16 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
-      tap(response => {
-        // Gérer les deux formats de réponse possibles
-        const token = response.data?.token || response.token;
-        const user = response.data?.user || response.user;
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password });
+  }
 
-        if (token && user) {
-          localStorage.setItem(this.tokenKey, token);
-          localStorage.setItem(this.userKey, JSON.stringify(user));
+  verifyCode(email: string, code: string): Observable<VerifyResponse> {
+    return this.http.post<VerifyResponse>(`${this.apiUrl}/login/verify`, { email, code }).pipe(
+      tap(response => {
+        if (response.success && response.data) {
+          localStorage.setItem(this.tokenKey, response.data.token);
+          localStorage.setItem(this.userKey, JSON.stringify(response.data.user));
         }
       })
     );

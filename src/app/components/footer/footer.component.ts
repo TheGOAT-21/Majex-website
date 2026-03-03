@@ -1,31 +1,15 @@
-import { Component, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
-import { AssetService } from '../../services/asset.service';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [AsyncPipe, NgIf],
+  imports: [],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FooterComponent implements OnInit {
-  private assetService = inject(AssetService);
-
+export class FooterComponent {
+  logoUrl = 'assets/logos/0-removebg-preview 1.png';
+  logoAlt = 'MAJEX CONSULTING';
   currentYear = new Date().getFullYear();
-  vm$!: Observable<{ url: string; alt: string }>;
-
-  ngOnInit(): void {
-    this.vm$ = combineLatest([
-      this.assetService.getUrl$('logo-main'),
-      this.assetService.getAsset$('logo-main'),
-    ]).pipe(
-      map(([url, asset]) => ({
-        url,
-        alt: asset?.alt_text ?? 'MAJEX CONSULTING'
-      }))
-    );
-  }
 }
