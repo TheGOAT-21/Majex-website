@@ -67,6 +67,10 @@ export class LoginComponent {
       next: (response) => {
         if (response.success) {
           this.router.navigate(['/mjx-admin-dashboard-secure-2025']);
+        } else {
+          this.errorMessage = response.message || 'Code invalide ou expiré';
+          this.loading = false;
+          this.code = '';
         }
       },
       error: (error) => {

@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(node compress-images.js:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []
