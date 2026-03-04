@@ -1,0 +1,6 @@
+/* Padding supplémentaire en bas pour les boutons sticky sur mobile */
+@media (max-width: 767px) {
+  main > div:last-of-type {
+    padding-bottom: 5rem;
+  }
+}

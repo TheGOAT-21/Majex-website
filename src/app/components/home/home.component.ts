@@ -8,6 +8,7 @@ import { ReferencesComponent } from '../references/references.component';
 import { ContactComponent } from '../contact/contact.component';
 import { FooterComponent } from '../footer/footer.component';
 import { EventsComponent } from '../events/events.component';
+import { FloatingEventComponent } from '../floating-event/floating-event.component';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,8 @@ import { EventsComponent } from '../events/events.component';
     ReferencesComponent,
     ContactComponent,
     FooterComponent,
-    EventsComponent
+    EventsComponent,
+    FloatingEventComponent
   ],
   templateUrl: './home.component.html'
 })

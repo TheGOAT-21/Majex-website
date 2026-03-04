@@ -5,10 +5,16 @@
         <img [src]="logoUrl" [alt]="logoAlt" class="h-12 w-auto mr-4">
       </div>
 
-      <div class="hidden md:flex space-x-8">
+      <div class="hidden md:flex md:space-x-5 lg:space-x-8">
         <a href="#home"       class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium text-sm">Accueil</a>
         <a href="#about"      class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium text-sm">À Propos</a>
         <a href="#services"   class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium text-sm">Services</a>
+        <a routerLink="/evenements"
+           [class.text-majex-primary]="isEventsRoute()"
+           [class.font-semibold]="isEventsRoute()"
+           [class.underline]="isEventsRoute()"
+           [class.underline-offset-4]="isEventsRoute()"
+           class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium text-sm">Événements</a>
         <a href="#references" class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium text-sm">Références</a>
         <a href="#contact"    class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium text-sm">Contact</a>
       </div>
@@ -32,7 +38,13 @@
         <a href="#home"       class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium" (click)="closeMenu()">Accueil</a>
         <a href="#about"      class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium" (click)="closeMenu()">À Propos</a>
         <a href="#services"   class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium" (click)="closeMenu()">Services</a>
-        <a href="#offers"     class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium" (click)="closeMenu()">Nos Offres</a>
+        <a routerLink="/evenements"
+           [class.text-majex-primary]="isEventsRoute()"
+           [class.font-semibold]="isEventsRoute()"
+           [class.underline]="isEventsRoute()"
+           [class.underline-offset-4]="isEventsRoute()"
+           class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium"
+           (click)="closeMenu()">Événements</a>
         <a href="#references" class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium" (click)="closeMenu()">Références</a>
         <a href="#contact"    class="text-majex-secondary hover:text-majex-primary transition duration-300 font-medium" (click)="closeMenu()">Contact</a>
         <div class="flex flex-col space-y-2 pt-4 border-t border-gray-200">

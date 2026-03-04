@@ -18,6 +18,14 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'evenements',
+    loadComponent: () => import('./components/events-page/events-page.component').then(m => m.EventsPageComponent)
+  },
+  {
+    path: 'evenements/:id',
+    loadComponent: () => import('./components/event-detail/event-detail.component').then(m => m.EventDetailComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

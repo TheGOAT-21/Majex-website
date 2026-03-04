@@ -1,0 +1,42 @@
+.floating-event {
+  position: fixed;
+  z-index: 50;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 400ms ease, transform 400ms ease;
+  pointer-events: none;
+}
+
+.floating-event.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .floating-event {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 18rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .floating-event {
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    width: calc(100vw - 2rem);
+    max-width: 24rem;
+  }
+
+  .floating-event.visible {
+    transform: translateX(-50%) translateY(0);
+  }
+}
