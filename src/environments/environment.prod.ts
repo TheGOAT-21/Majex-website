@@ -11,7 +11,7 @@
 
 export const environment = {
   production: true,
-  apiUrl: 'https://majexconsulting.com'  // ⚠️ À REMPLACER par votre vraie URL de production
+  apiUrl: 'https://majexconsulting.com'  
 };
 
 /**
